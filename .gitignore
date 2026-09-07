@@ -63,4 +63,6 @@ media/
 .vscode/
 .idea/
 *.swp
-*.swo
+*.swodata.json
+data.json
+blog_data.json
