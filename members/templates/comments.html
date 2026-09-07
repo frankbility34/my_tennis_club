@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Comments Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>Comments Management</h1>
+
+    <p>
+        Review and manage comments from your readers.
+    </p>
+
+    <hr>
+
+    <table class="table table-bordered table-hover">
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Commenter</th>
+                <th>Post</th>
+                <th>Comment</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for comment in comments %}
+
+            <tr>
+
+                <td>
+                    {{ comment.id }}
+                </td>
+
+                <td>
+                    {{ comment.user.username }}
+                </td>
+
+                <td>
+                    {{ comment.post.title }}
+                </td>
+
+                <td>
+                    {{ comment.content }}
+                </td>
+
+                <td>
+                    {{ comment.get_status_display }}
+                </td>
+
+                <td>
+                    {{ comment.created_at|date:"M d, Y" }}
+                </td>
+
+                <td>
+
+                    <a
+                        href="{% url 'approve_comment' comment.id %}"
+                        class="btn btn-success btn-sm"
+                    >
+                        Approve
+                    </a>
+
+                    <a
+                        href="{% url 'reject_comment' comment.id %}"
+                        class="btn btn-warning btn-sm"
+                    >
+                        Reject
+                    </a>
+
+                    <a
+                        href="{% url 'delete_comment' comment.id %}"
+                        class="btn btn-danger btn-sm"
+                    >
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="text-center"
+                >
+                    No comments have been created yet.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

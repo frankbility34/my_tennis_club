@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Authors
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>User / Author Management</h1>
+
+    <p>Manage users who can create and manage blog posts.</p>
+
+    <a href="{% url 'create_author' %}" class="btn btn-primary">Add New Author</a>
+
+    <hr>
+
+    <h2>Authors</h2>
+
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for user in users %}
+
+            <tr>
+                <td>{{ user.id }}</td>
+
+                <td>{{ user.username }}</td>
+
+                <td>
+                    {{ user.first_name }}
+                    {{ user.last_name }}
+                </td>
+
+                <td>{{ user.email }}</td>
+
+                <td>
+                    <a href="{% url 'edit_author' user.id %}" class="btn btn-primary btn-sm">Edit</a>
+
+                    <a href="{% url 'delete_author' user.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="5">
+                    No authors have been created yet.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Post
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>Edit Post</h1>
+
+    <p>
+        Update your blog post below.
+    </p>
+
+    <hr>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <!-- POST TITLE -->
+
+        <div class="mb-3">
+
+            <label
+                for="title"
+                class="form-label"
+            >
+                Post Title
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                id="title"
+                class="form-control"
+                value="{{ post.title }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- AUTHOR -->
+
+        <div class="mb-3">
+
+            <label
+                for="author"
+                class="form-label"
+            >
+                Author
+            </label>
+
+            <select
+                name="author"
+                id="author"
+                class="form-control"
+                required
+            >
+
+                <option value="">
+                    -- Select Author --
+                </option>
+
+                {% for author in authors %}
+
+                    <option
+                        value="{{ author.id }}"
+                        {% if post.author.id == author.id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ author.username }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="mb-3">
+
+            <label
+                for="category"
+                class="form-label"
+            >
+                Category
+            </label>
+
+            <select
+                name="category"
+                id="category"
+                class="form-control"
+                required
+            >
+
+                <option value="">
+                    -- Select Category --
+                </option>
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category.id }}"
+                        {% if post.category.id == category.id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category.category_name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- TAGS -->
+
+        <div class="mb-3">
+
+            <label
+                for="tags"
+                class="form-label"
+            >
+                Tags
+            </label>
+
+            <select
+                name="tags"
+                id="tags"
+                class="form-control"
+                multiple
+            >
+
+                {% for tag in tags %}
+
+                    <option
+                        value="{{ tag.id }}"
+                        {% if tag in post.tags.all %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ tag.tg_name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <small class="text-muted">
+                Hold Command on Mac to select multiple tags.
+            </small>
+
+        </div>
+
+
+        <!-- EXCERPT -->
+
+        <div class="mb-3">
+
+            <label
+                for="excerpt"
+                class="form-label"
+            >
+                Excerpt
+            </label>
+
+            <textarea
+                name="excerpt"
+                id="excerpt"
+                class="form-control"
+                rows="4"
+                placeholder="Write a short description..."
+            >{{ post.excerpt }}</textarea>
+
+        </div>
+
+
+        <!-- POST CONTENT -->
+
+        <div class="mb-3">
+
+            <label
+                for="content"
+                class="form-label"
+            >
+                Post Content
+            </label>
+
+            <textarea
+                name="content"
+                id="content"
+                class="form-control"
+                rows="10"
+                placeholder="Write your article..."
+                required
+            >{{ post.content }}</textarea>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="mb-3">
+
+            <label
+                for="status"
+                class="form-label"
+            >
+                Status
+            </label>
+
+            <select
+                name="status"
+                id="status"
+                class="form-control"
+                required
+            >
+
+                <option
+                    value="draft"
+                    {% if post.status == "draft" %}
+                        selected
+                    {% endif %}
+                >
+                    Draft
+                </option>
+
+                <option
+                    value="published"
+                    {% if post.status == "published" %}
+                        selected
+                    {% endif %}
+                >
+                    Published
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- FEATURED IMAGE -->
+
+        <div class="mb-3">
+
+            <label
+                for="featured_image"
+                class="form-label"
+            >
+                Featured Image
+            </label>
+
+
+            <!-- CURRENT IMAGE -->
+
+            {% if post.featured_image %}
+
+                <div class="mb-3">
+
+                    <p>
+                        Current Featured Image:
+                    </p>
+
+                    <img
+                        src="{{ post.featured_image.image.url }}"
+                        alt="{{ post.featured_image.title }}"
+                        style="max-width: 300px; height: auto;"
+                    >
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- MEDIA LIBRARY -->
+
+            <select
+                name="featured_image"
+                id="featured_image"
+                class="form-control"
+            >
+
+                <option value="">
+                    -- Select an image --
+                </option>
+
+                {% for item in media %}
+
+                    <option
+                        value="{{ item.id }}"
+                        {% if post.featured_image and post.featured_image.id == item.id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ item.title }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <small class="text-muted">
+                Select an image from your Media Library.
+            </small>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Update Post
+        </button>
+
+        <a
+            href="{% url 'posts' %}"
+            class="btn btn-secondary"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
+

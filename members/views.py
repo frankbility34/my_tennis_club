@@ -1,0 +1,1352 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from .models import Post, Category, Tag, Comment, Media
+from django.shortcuts import render
+from django.db.models import Count
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+
+
+# Create your views here.
+
+
+
+
+
+
+
+
+
+def Myhome(request):
+
+    # =========================================================
+    # ALL PUBLISHED POSTS
+    # =========================================================
+
+    published_posts = (
+        Post.objects
+        .filter(status="published")
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related("tags")
+        .order_by("-created_at")
+    )
+
+
+    # =========================================================
+    # LATEST POSTS
+    # =========================================================
+    # The 6 most recently published posts.
+
+    latest_posts = published_posts[:6]
+
+
+    # =========================================================
+    # TOP POSTS
+    # =========================================================
+    # Posts with the most comments.
+    #
+    # -comment_count = highest comments first
+    # -created_at = newest first if comments are equal
+
+    top_posts = (
+        Post.objects
+        .filter(status="published")
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related("tags")
+        .annotate(
+            comment_count=Count("comments")
+        )
+        .order_by(
+            "-comment_count",
+            "-created_at"
+        )[:5]
+    )
+
+
+    # =========================================================
+    # CATEGORIES
+    # =========================================================
+
+    categories = (
+        Category.objects
+        .all()
+        .order_by("category_name")
+    )
+
+
+    # =========================================================
+    # TAGS
+    # =========================================================
+
+    tags = (
+        Tag.objects
+        .all()
+        .order_by("tg_name")
+    )
+
+
+    # =========================================================
+    # POSTS FOR EACH CATEGORY
+    # =========================================================
+    # Every category gets its own latest 4 published posts.
+    #
+    # Example:
+    #
+    # Sports
+    #   → Post 1
+    #   → Post 2
+    #   → Post 3
+    #
+    # Technology
+    #   → Post 1
+    #   → Post 2
+    #
+    # Business
+    #   → Post 1
+    #
+    # etc.
+    # =========================================================
+
+    category_sections = []
+
+    for category in categories:
+
+        posts = (
+            Post.objects
+            .filter(
+                status="published",
+                category=category
+            )
+            .select_related(
+                "author",
+                "category",
+                "featured_image"
+            )
+            .prefetch_related("tags")
+            .order_by("-created_at")[:4]
+        )
+
+        # Only show a category section if
+        # the category actually contains published posts.
+
+        if posts:
+
+            category_sections.append({
+                "category": category,
+                "posts": posts
+            })
+
+
+    # =========================================================
+    # CONTEXT
+    # =========================================================
+
+    context = {
+
+        "latest_posts": latest_posts,
+
+        "top_posts": top_posts,
+
+        "categories": categories,
+
+        "tags": tags,
+
+        "category_sections": category_sections,
+    }
+
+
+    # =========================================================
+    # RENDER HOME PAGE
+    # =========================================================
+
+    return render(
+        request,
+        "index.html",
+        context
+    )
+
+
+
+
+
+
+    
+
+def categories(request):
+
+    categories = Category.objects.all()
+
+    return render(
+        request,
+        "categories.html",
+        {"categories": categories}
+    )
+
+
+@staff_member_required
+def category_management(request):
+    categories = Category.objects.all()
+
+    return render(request, "category_Management.html", {
+        "categories": categories
+    })   
+
+
+@staff_member_required
+def create_category(request):
+
+    if request.method == "POST":
+
+        category_name = request.POST["category_name"]
+
+        if category_name:
+            Category.objects.create(
+                category_name=category_name
+            )
+
+        return redirect("categories")
+
+    return redirect("categories")
+
+@staff_member_required
+def edit_category(request, category_id):
+
+    category = Category.objects.get(id=category_id)
+
+    if request.method == "POST":
+
+        category_name = request.POST["category_name"]
+
+        if category_name:
+            category.category_name = category_name
+            category.save()
+
+        return redirect("categories")
+
+    return render(
+        request,
+        "edit_category.html",
+        {"category": category}
+    )
+
+@staff_member_required
+def delete_category(request, category_id):
+
+    category = Category.objects.get(id=category_id)
+
+    category.delete()
+
+    return redirect("categories")
+
+
+@staff_member_required
+def tags_management(request):
+
+    tags = Tag.objects.all()
+
+    context = {
+        "tags": tags
+    }
+
+    return render(
+        request,
+        "tags_management.html",
+        context
+    )
+
+@staff_member_required
+def add_tag(request):
+
+    if request.method == "POST":
+
+        tg_name = request.POST.get("tg_name", "").strip()
+
+        if not tg_name:
+            messages.error(
+                request,
+                "Tag name cannot be empty."
+            )
+
+            return redirect("tags_management")
+
+        if Tag.objects.filter(tg_name__iexact=tg_name).exists():
+
+            messages.error(
+                request,
+                "This tag already exists."
+            )
+
+            return redirect("tags_management")
+
+        Tag.objects.create(
+            tg_name=tg_name
+        )
+
+        messages.success(
+            request,
+            "Tag added successfully."
+        )
+
+    return redirect("tags_management")
+
+
+@staff_member_required
+def edit_tag(request, tag_id):
+
+    tag = get_object_or_404(
+        Tag,
+        id=tag_id
+    )
+
+    if request.method == "POST":
+
+        tg_name = request.POST.get("tg_name", "").strip()
+
+        if not tg_name:
+
+            messages.error(
+                request,
+                "Tag name cannot be empty."
+            )
+
+            return redirect(
+                "edit_tag",
+                tag_id=tag.id
+            )
+
+        if Tag.objects.filter(
+            tg_name__iexact=tg_name
+        ).exclude(id=tag.id).exists():
+
+            messages.error(
+                request,
+                "A tag with this name already exists."
+            )
+
+            return redirect(
+                "edit_tag",
+                tag_id=tag.id
+            )
+
+        tag.tg_name = tg_name
+
+        
+        tag.slug = ""
+
+        tag.save()
+
+        messages.success(
+            request,
+            "Tag updated successfully."
+        )
+
+        return redirect("tags_management")
+
+    context = {
+        "tag": tag
+    }
+
+    return render(
+        request,
+        "/edit_tag.html",
+        context
+    )
+
+@staff_member_required
+def delete_tag(request, tag_id):
+
+    tag = get_object_or_404(
+        Tag,
+        id=tag_id
+    )
+
+    if request.method == "POST":
+
+        tag_name = tag.tg_name
+
+        tag.delete()
+
+        messages.success(
+            request,
+            f'Tag "{tag_name}" was deleted successfully.'
+        )
+
+    return redirect("tags_management")
+
+
+
+@staff_member_required
+def authors(request):
+
+    users = User.objects.all()
+
+    return render(request, "authors.html", {
+        "users": users
+    })    
+
+@staff_member_required
+def create_author(request):
+
+    if request.method == "POST":
+
+        username = request.POST["username"]
+        password = request.POST["password"]
+
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+
+            messages.warning(
+                request,
+                f"Username '{username}' already exists. Please choose another username."
+            )
+
+            return redirect("create_author")
+
+        # Create the author
+        User.objects.create_user(
+            username=username,
+            password=password
+        )
+
+        messages.success(
+            request,
+            f"Author '{username}' was created successfully."
+        )
+
+        return redirect("authors")
+
+    return render(
+        request,
+        "create_author.html"
+    )
+
+
+@staff_member_required
+def edit_author(request, user_id):
+
+    user = User.objects.get(id=user_id)
+
+    if request.method == "POST":
+
+        user.first_name = request.POST["first_name"]
+        user.last_name = request.POST["last_name"]
+        user.username = request.POST["username"]
+        user.email = request.POST["email"]
+
+        user.save()
+
+        messages.success(
+            request,
+            "Author updated successfully."
+        )
+
+        return redirect("authors")
+
+    return render(
+        request,
+        "edit_author.html",
+        {
+            "user": user
+        }
+    )
+
+@staff_member_required
+def delete_author(request, user_id):
+
+    user = User.objects.get(id=user_id)
+
+    user.delete()
+
+    messages.success(
+        request,
+        "Author deleted successfully."
+    )
+
+    return redirect("authors") 
+
+
+@staff_member_required
+def posts(request):
+
+    posts = Post.objects.all().order_by("-created_at")
+
+    return render(
+        request,
+        "posts.html",
+        {
+            "posts": posts
+        }
+    )      
+
+@staff_member_required
+def create_post(request):
+
+    # =========================================================
+    # POST REQUEST
+    # This runs when the user submits the Create Post form.
+    # =========================================================
+
+    if request.method == "POST":
+
+        title = request.POST.get("title")
+        author_id = request.POST.get("author")
+        category_id = request.POST.get("category")
+        excerpt = request.POST.get("excerpt")
+        content = request.POST.get("content")
+        status = request.POST.get("status")
+        media_id = request.POST.get("featured_image")
+
+
+        # =====================================================
+        # CATEGORY
+        # =====================================================
+
+        category = None
+
+        if category_id:
+
+            category = get_object_or_404(
+                Category,
+                id=category_id
+            )
+
+
+        # =====================================================
+        # FEATURED IMAGE
+        # Get the image from the Media Library.
+        # =====================================================
+
+        featured_image = None
+
+        if media_id:
+
+            featured_image = get_object_or_404(
+                Media,
+                id=media_id
+            )
+
+
+        # =====================================================
+        # AUTHOR
+        # =====================================================
+
+        author = get_object_or_404(
+            User,
+            id=author_id
+        )
+
+
+        # =====================================================
+        # CREATE POST
+        # =====================================================
+
+        post = Post.objects.create(
+            title=title,
+            author=author,
+            category=category,
+            excerpt=excerpt,
+            content=content,
+            featured_image=featured_image,
+            status=status
+        )
+
+
+        # =====================================================
+        # TAGS
+        # =====================================================
+
+        tag_ids = request.POST.getlist("tags")
+
+        post.tags.set(tag_ids)
+
+
+        # =====================================================
+        # SUCCESS MESSAGE
+        # =====================================================
+
+        messages.success(
+            request,
+            "Post created successfully."
+        )
+
+
+        # =====================================================
+        # RETURN TO POST MANAGEMENT
+        # =====================================================
+
+        return redirect("posts")
+
+
+    # =========================================================
+    # GET REQUEST
+    # This runs when the user clicks:
+    # "+ Create New Post"
+    # =========================================================
+
+    authors = User.objects.all()
+
+    categories = Category.objects.all()
+
+    tags = Tag.objects.all()
+
+    media = Media.objects.all()
+
+
+    # =========================================================
+    # SEND DATA TO CREATE_POST.HTML
+    # =========================================================
+
+    context = {
+        "authors": authors,
+        "categories": categories,
+        "tags": tags,
+        "media": media,
+    }
+
+
+    return render(
+        request,
+        "create_post.html",
+        context
+    )
+
+
+
+@staff_member_required
+def edit_post(request, post_id):
+
+    post = Post.objects.get(id=post_id)
+
+    if request.method == "POST":
+
+        # TITLE
+        post.title = request.POST["title"]
+
+        # AUTHOR
+        author_id = request.POST.get("author")
+
+        if author_id:
+            post.author = User.objects.get(
+                id=author_id
+            )
+
+        # CATEGORY
+        category_id = request.POST.get("category")
+
+        if category_id:
+            post.category = Category.objects.get(
+                id=category_id
+            )
+
+        # EXCERPT
+        post.excerpt = request.POST["excerpt"]
+
+        # CONTENT
+        post.content = request.POST["content"]
+
+        # STATUS
+        post.status = request.POST["status"]
+
+        # FEATURED IMAGE FROM MEDIA LIBRARY
+        media_id = request.POST.get("featured_image")
+
+        if media_id:
+            post.featured_image = Media.objects.get(
+                id=media_id
+            )
+        else:
+            post.featured_image = None
+
+        # SAVE POST
+        post.save()
+
+        # TAGS
+        tag_ids = request.POST.getlist("tags")
+
+        post.tags.set(tag_ids)
+
+        messages.success(
+            request,
+            "Post updated successfully."
+        )
+
+        return redirect("posts")
+
+    # DATA FOR THE EDIT FORM
+    authors = User.objects.all()
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+    media = Media.objects.all()
+
+    return render(
+        request,
+        "edit_post.html",
+        {
+            "post": post,
+            "authors": authors,
+            "categories": categories,
+            "tags": tags,
+            "media": media,
+        }
+    )
+
+
+
+
+
+@staff_member_required
+def delete_post(request, post_id):
+
+    post = Post.objects.get(id=post_id)
+
+    post.delete()
+
+    messages.success(
+        request,
+        "Post deleted successfully."
+    )
+
+    return redirect("posts")  
+ 
+@staff_member_required    
+def comments(request):
+
+    comments = Comment.objects.all().order_by("-created_at")
+ 
+
+    return render(
+        request,
+        "comments.html",
+        {
+            "comments": comments
+        }
+    )  
+
+@login_required
+def create_comment(request, post_id):
+
+    if request.method == "POST":
+
+        content = request.POST.get("content", "").strip()
+
+        if not content:
+            messages.error(
+                request,
+                "Comment cannot be empty."
+            )
+
+            return redirect(
+                "post_detail",
+                post_id=post_id
+            )
+
+        post = get_object_or_404(
+            Post,
+            id=post_id,
+            status="published"
+        )
+
+        Comment.objects.create(
+            post=post,
+            user=request.user,
+            content=content
+        )
+
+        messages.success(
+            request,
+            "Your comment has been submitted for review."
+        )
+
+        return redirect(
+            "post_detail",
+            post_id=post.id
+        )
+
+    return redirect(
+        "post_detail",
+        post_id=post_id
+    )
+
+@staff_member_required
+def approve_comment(request, comment_id):
+
+    comment = Comment.objects.get(
+        id=comment_id
+    )
+
+    comment.status = "approved"
+
+    comment.save()
+
+    messages.success(
+        request,
+        "Comment approved successfully."
+    )
+
+    return redirect("comments")
+
+
+@staff_member_required
+def reject_comment(request, comment_id):
+
+    comment = Comment.objects.get(
+        id=comment_id
+    )
+
+    comment.status = "rejected"
+
+    comment.save()
+
+    messages.warning(
+        request,
+        "Comment rejected."
+    )
+
+    return redirect("comments")
+
+@staff_member_required
+def delete_comment(request, comment_id):
+
+    comment = Comment.objects.get(
+        id=comment_id
+    )
+
+    comment.delete()
+
+    messages.success(
+        request,
+        "Comment deleted successfully."
+    )
+
+    return redirect("comments")    
+
+
+@staff_member_required
+def media_management(request):
+
+    search = request.GET.get(
+        "search",
+        ""
+    )
+
+    media = Media.objects.all()
+
+    if search:
+
+        media = media.filter(
+            title__icontains=search
+        )
+
+    media = media.order_by(
+        "-created_at"
+    )
+
+    return render(
+        request,
+        "media_management.html",
+        {
+            "media": media,
+            "search": search
+        }
+    )
+
+@staff_member_required
+def upload_media(request):
+
+    if request.method == "POST":
+
+        title = request.POST["title"]
+
+        image = request.FILES.get("image")
+
+        Media.objects.create(
+            title=title,
+            image=image,
+            uploaded_by=request.user
+        )
+
+        messages.success(
+            request,
+            "Image uploaded successfully."
+        )
+
+        return redirect("media_management")
+
+    return render(
+        request,
+        "upload_media.html"
+    )
+
+@staff_member_required
+def delete_media(request, media_id):
+
+    media = Media.objects.get(
+        id=media_id
+    )
+
+    if media.image:
+        media.image.delete(save=False)
+
+    media.delete()
+
+    messages.success(
+        request,
+        "Media deleted successfully."
+    )
+
+    return redirect("media_management") 
+
+
+@staff_member_required 
+def dashboard(request):
+
+    total_posts = Post.objects.count()
+
+    total_authors = User.objects.count()
+
+    total_comments = Comment.objects.count()
+
+    total_media = Media.objects.count()
+
+    total_categories = Category.objects.count()
+
+    total_tags = Tag.objects.count()
+
+    published_posts = Post.objects.filter(
+        status="published"
+    ).count()
+
+    draft_posts = Post.objects.filter(
+        status="draft"
+    ).count()
+
+    approved_comments = Comment.objects.filter(
+        status="approved"
+    ).count()
+
+    pending_comments = Comment.objects.filter(
+        status="pending"
+    ).count()
+
+    rejected_comments = Comment.objects.filter(
+        status="rejected"
+    ).count()
+
+    recent_posts = Post.objects.all().order_by(
+        "-created_at"
+    )[:5]
+
+    recent_comments = Comment.objects.all().order_by(
+        "-created_at"
+    )[:5]
+    
+    popular_posts = Post.objects.annotate(
+        comment_count=Count("comments")
+    ).order_by(
+        "-comment_count"
+    )[:5] 
+
+    context = {
+        "total_posts": total_posts,
+        "total_authors": total_authors,
+        "total_comments": total_comments,
+        "total_media": total_media,
+        "total_categories": total_categories,
+        "total_tags": total_tags,
+        "published_posts": published_posts,
+        "draft_posts": draft_posts,
+        "approved_comments": approved_comments,
+        "pending_comments": pending_comments,
+        "rejected_comments": rejected_comments,
+        "recent_posts": recent_posts,
+        "recent_comments": recent_comments,
+        "popular_posts": popular_posts,
+    }
+
+    return render(
+        request,
+        "dashboard.html",
+        context
+    )          
+
+
+def search(request):
+
+    query = request.GET.get("q", "")
+
+    posts = Post.objects.filter(
+        status="published"
+    )
+
+    if query:
+
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query)
+        ).distinct()
+
+
+
+    paginator = Paginator(posts, 5)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
+
+    context = {
+        "query": query,
+        "posts": page_obj,
+        "page_obj": page_obj,
+    }
+
+
+    return render(
+        request,
+        "search.html",
+        context
+    )
+
+
+
+def post_detail(request, post_id):
+
+    post = get_object_or_404(
+        Post.objects.select_related(
+            "featured_image",
+            "category",
+            "author"
+        ).prefetch_related(
+            "tags"
+        ),
+        id=post_id,
+        status="published"
+    )
+
+    comments = post.comments.filter(
+        status="approved"
+    ).select_related(
+        "user"
+    ).order_by(
+        "-created_at"
+    )
+
+    context = {
+        "post": post,
+        "comments": comments,
+    }
+
+    return render(
+        request,
+        "post_detail.html",
+        context
+    )
+
+
+
+
+
+
+def category_posts(request, category_id):
+
+    # Find the category.
+    # If the category does not exist, Django shows a 404 page.
+    category = get_object_or_404(
+        Category,
+        id=category_id
+    )
+
+    # Find all published posts belonging to this category.
+    # Newest posts appear first.
+    posts = Post.objects.filter(
+        category=category,
+        status="published"
+    ).order_by(
+        "-created_at"
+    )
+
+    # Send the category and its posts to the template.
+    context = {
+        "category": category,
+        "posts": posts,
+    }
+
+    return render(
+        request,
+        "category_posts.html",
+        context
+    )
+
+
+
+
+def tag_posts(request, slug):
+
+    tag = get_object_or_404(
+        Tag,
+        slug=slug
+    )
+
+    posts = Post.objects.filter(
+        tags=tag,
+        status="published"
+    ).order_by(
+        "-created_at"
+    )
+
+    context = {
+        "tag": tag,
+        "posts": posts,
+    }
+
+    return render(
+        request,
+        "tag_posts.html",
+        context
+    )
+
+
+
+def author_posts(request, user_id):
+
+    author = User.objects.get(
+        id=user_id
+    )
+
+    posts = Post.objects.filter(
+        author=author,
+        status="published"
+    ).order_by(
+        "-created_at"
+    )
+
+    context = {
+        "author": author,
+        "posts": posts,
+    }
+
+    return render(
+        request,
+        "author_posts.html",
+        context
+    )
+
+
+def register(request):
+
+    if request.method == "POST":
+
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
+
+        # Check required fields
+
+        if not first_name or not last_name or not username or not email or not password:
+
+            messages.error(
+                request,
+                "All fields are required."
+            )
+
+            return redirect("register")
+
+
+        # Check username
+
+        if User.objects.filter(
+            username__iexact=username
+        ).exists():
+
+            messages.error(
+                request,
+                "Username already exists."
+            )
+
+            return redirect("register")
+
+
+        # Check email
+
+        if User.objects.filter(
+            email__iexact=email
+        ).exists():
+
+            messages.error(
+                request,
+                "An account with this email already exists."
+            )
+
+            return redirect("register")
+
+
+        # Check passwords
+
+        if password != confirm_password:
+
+            messages.error(
+                request,
+                "Passwords do not match."
+            )
+
+            return redirect("register")
+
+
+        # Create user
+
+        User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            password=password
+        )
+
+
+        messages.success(
+            request,
+            "Account created successfully. You can now log in."
+        )
+
+        return redirect("login")
+
+
+    return render(
+        request,
+        "register.html"
+    )
+
+
+def user_login(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get(
+            "username",
+            ""
+        ).strip()
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+
+        if user is not None:
+
+            login(
+                request,
+                user
+            )
+
+            messages.success(
+                request,
+                "You have successfully logged in."
+            )
+
+            return redirect("home")
+
+
+        messages.error(
+            request,
+            "Invalid username or password."
+        )
+
+        return redirect("login")
+
+
+    return render(
+        request,
+        "login.html"
+    )
+
+def user_logout(request):
+
+    logout(request)
+
+    messages.success(
+        request,
+        "You have been logged out."
+    )
+
+    return redirect("home")
+
+@login_required
+def profile(request):
+
+    user = request.user
+
+    return render(
+        request,
+        "profile.html",
+        {
+            "user": user
+        }
+    )
+
+@login_required
+def edit_profile(request):
+
+    user = request.user
+
+    if request.method == "POST":
+
+        user.first_name = request.POST["first_name"]
+
+        user.last_name = request.POST["last_name"]
+
+        user.email = request.POST["email"]
+
+        user.save()
+
+        messages.success(
+            request,
+            "Profile updated successfully."
+        )
+
+        return redirect("profile")
+
+    return render(
+        request,
+        "edit_profile.html",
+        {
+            "user": user
+        }
+    )
+
+
+def contact(request):
+    return render(request, "contact.html")    
+
+
+
+            
+
+
+
+
+

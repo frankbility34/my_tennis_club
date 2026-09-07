@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Categories | News Blog
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- ===================================================== -->
+    <!-- PAGE HEADING -->
+    <!-- ===================================================== -->
+
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold">
+            Categories
+        </h1>
+
+        <p class="text-muted">
+            Browse our blog posts by category.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- CATEGORY LIST -->
+    <!-- ===================================================== -->
+
+    {% if categories %}
+
+        <div class="row">
+
+            {% for category in categories %}
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body text-center">
+
+                            <!-- CATEGORY NAME -->
+
+                            <h5 class="card-title fw-bold">
+                                {{ category.category_name }}
+                            </h5>
+
+
+                            <!-- VIEW POSTS BUTTON -->
+
+                            <a
+                                href="{% url 'category_posts' category.id %}"
+                                class="btn btn-outline-primary mt-3"
+                            >
+                                View Posts
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- ================================================= -->
+        <!-- NO CATEGORIES -->
+        <!-- ================================================= -->
+
+        <div class="alert alert-info text-center">
+
+            No categories have been created yet.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

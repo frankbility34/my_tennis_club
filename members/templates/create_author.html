@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Create Author
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>Create Author</h1>
+
+    <p>Add a new user who can contribute to your blog.</p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                First Name
+            </label>
+
+            <input
+                type="text"
+                name="first_name"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Last Name
+            </label>
+
+            <input
+                type="text"
+                name="last_name"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Username
+            </label>
+
+            <input
+                type="text"
+                name="username"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Email
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Password
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Create Author
+        </button>
+
+        <a
+            href="{% url 'authors' %}"
+            class="btn btn-secondary"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

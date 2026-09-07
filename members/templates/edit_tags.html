@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Tag
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h1>Edit Tag</h1>
+        <p class="text-muted">
+            Update the name of your blog tag.
+        </p>
+    </div>
+
+
+    <div class="card p-4">
+
+        <form
+            method="POST"
+            action="{% url 'edit_tag' tag.id %}"
+        >
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label
+                    for="tg_name"
+                    class="form-label"
+                >
+                    Tag Name
+                </label>
+
+                <input
+                    type="text"
+                    id="tg_name"
+                    name="tg_name"
+                    class="form-control"
+                    value="{{ tag.tg_name }}"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Changes
+            </button>
+
+
+            <a
+                href="{% url 'tags_management' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

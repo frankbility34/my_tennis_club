@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+
+<!-- SEARCH HEADER -->
+
+<div class="mb-4">
+
+    <h1>
+        Search
+    </h1>
+
+    <p class="text-muted">
+        Find articles, news and stories on our blog.
+    </p>
+
+</div>
+
+
+<!-- SEARCH FORM -->
+
+<form
+    method="GET"
+    action="{% url 'search' %}"
+    class="mb-5"
+>
+
+    <div class="input-group">
+
+        <input
+            type="search"
+            name="q"
+            class="form-control"
+            placeholder="Search posts..."
+            value="{{ query }}"
+        >
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Search
+        </button>
+
+    </div>
+
+</form>
+
+
+
+
+{% if query %}
+
+    <h4 class="mb-4">
+
+        Search results for:
+
+        <strong>
+            "{{ query }}"
+        </strong>
+
+    </h4>
+
+
+    {% if posts %}
+
+        <p class="text-muted">
+            {{ posts|length }} result{{ posts|length|pluralize }}
+            found.
+        </p>
+
+
+        
+
+        <div class="row">
+
+            {% for post in posts %}
+
+                <div class="col-lg-6 mb-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h4 class="card-title">
+                                {{ post.title }}
+                            </h4>
+
+
+                            <p class="text-muted">
+                                {{ post.content|truncatewords:30 }}
+                            </p>
+
+
+                            <p class="small text-muted">
+
+                                Published:
+
+                                {{ post.created_at|date:"M d, Y" }}
+
+                            </p>
+
+
+                            <a
+                                href="#"
+                                class="btn btn-outline-primary"
+                            >
+                                Read More
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        
+
+        {% if page_obj.has_other_pages %}
+
+            <nav aria-label="Search results pages">
+
+                <ul class="pagination justify-content-center">
+
+
+                    
+
+                    {% if page_obj.has_previous %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?q={{ query }}&page={{ page_obj.previous_page_number }}"
+                            >
+                                Previous
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                Previous
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+
+                    
+
+                    {% for number in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == number %}
+
+                            <li class="page-item active">
+
+                                <span class="page-link">
+                                    {{ number }}
+                                </span>
+
+                            </li>
+
+                        {% else %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?q={{ query }}&page={{ number }}"
+                                >
+                                    {{ number }}
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    
+
+                    {% if page_obj.has_next %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?q={{ query }}&page={{ page_obj.next_page_number }}"
+                            >
+                                Next
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                Next
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        {% endif %}
+
+
+    {% else %}
+
+        
+
+        <div class="alert alert-warning">
+
+            <h5>
+                No posts found.
+            </h5>
+
+            <p class="mb-0">
+
+                We couldn't find any posts matching
+                "{{ query }}".
+
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+{% else %}
+
+    
+
+    <div class="text-center mt-5">
+
+        <h4>
+            What are you looking for?
+        </h4>
+
+        <p class="text-muted">
+
+            Enter a keyword above to search the blog.
+
+        </p>
+
+    </div>
+
+{% endif %}
+
+
+</div>
+
+{% endblock %}

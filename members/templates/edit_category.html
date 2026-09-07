@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edith Category 
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1>Edit Category</h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label for="category_name">
+                Category Name
+            </label>
+
+            <input
+                type="text"
+                id="category_name"
+                name="category_name"
+                value="{{ category.category_name }}"
+                class="form-control"
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            Update Category
+        </button>
+
+        <a
+            href="{% url 'create_category' %}"
+            class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+
+{% endblock %}

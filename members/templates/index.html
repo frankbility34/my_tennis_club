@@ -1,0 +1,1074 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    News Blog
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ========================================================= -->
+<!-- HOME PAGE -->
+<!-- ========================================================= -->
+
+<div class="home-page">
+
+
+    <!-- ===================================================== -->
+    <!-- TOP HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="top-header">
+
+        <div class="container">
+
+            <div class="row align-items-center">
+
+                <!-- LOGO -->
+
+                <div class="col-lg-3 col-md-4">
+
+                    <div class="logo">
+
+                        <a href="{% url 'home' %}">
+
+                            <h1>MY BLOG</h1>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="col-lg-6 col-md-4">
+
+                    <div class="search">
+
+                        <form
+                            method="GET"
+                            action="{% url 'search' %}"
+                        >
+
+                            <input
+                                type="text"
+                                name="q"
+                                placeholder="Search news..."
+                                aria-label="Search news"
+                            >
+
+                            <button type="submit">
+
+                                <i class="fa fa-search"></i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SOCIAL MEDIA -->
+
+                <div class="col-lg-3 col-md-4">
+
+                    <div class="social">
+
+                        <a href="#" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+
+                        <a href="#" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+
+                        <a href="#" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+
+                        <a href="#" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                        <a href="#" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- NAVIGATION -->
+    <!-- ===================================================== -->
+
+    <div class="header">
+
+        <div class="container">
+
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+
+                <a
+                    href="{% url 'home' %}"
+                    class="navbar-brand"
+                >
+                    MY BLOG
+                </a>
+
+
+                <button
+                    type="button"
+                    class="navbar-toggler"
+                    data-toggle="collapse"
+                    data-target="#navbarCollapse"
+                    aria-controls="navbarCollapse"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarCollapse"
+                >
+
+                    <div class="navbar-nav m-auto">
+
+                        <!-- HOME -->
+
+                        <a
+                            href="{% url 'home' %}"
+                            class="nav-item nav-link active"
+                        >
+                            Home
+                        </a>
+
+
+                        <!-- CATEGORIES -->
+
+                        {% for category in categories %}
+
+                            <a
+                                href="{% url 'category_posts' category.id %}"
+                                class="nav-item nav-link"
+                            >
+
+                                {{ category.category_name }}
+
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FEATURED NEWS -->
+    <!-- ===================================================== -->
+
+    {% if latest_posts %}
+
+        <section class="top-news">
+
+            <div class="container-fluid">
+
+                <div class="row">
+
+
+                    <!-- ========================================= -->
+                    <!-- MAIN FEATURED POST -->
+                    <!-- ========================================= -->
+
+                    <div class="col-md-6 tn-left">
+
+                        {% with post=latest_posts.0 %}
+
+                            <article class="tn-img">
+
+                                {% if post.featured_image %}
+
+                                    <img
+                                        src="{{ post.featured_image.image.url }}"
+                                        alt="{{ post.title }}"
+                                    >
+
+                                {% else %}
+
+                                    <img
+                                        src="{% static 'img/no-image.jpg' %}"
+                                        alt="No image available"
+                                    >
+
+                                {% endif %}
+
+
+                                <div class="tn-content">
+
+                                    <div class="tn-content-inner">
+
+
+                                        {% if post.category %}
+
+                                            <span class="tn-category">
+
+                                                {{ post.category.category_name }}
+
+                                            </span>
+
+                                        {% endif %}
+
+
+                                        <a
+                                            class="tn-date"
+                                            href="{% url 'post_detail' post.id %}"
+                                        >
+
+                                            <i class="far fa-clock"></i>
+
+                                            {{ post.created_at|date:"d M Y" }}
+
+                                        </a>
+
+
+                                        <a
+                                            class="tn-title"
+                                            href="{% url 'post_detail' post.id %}"
+                                        >
+
+                                            {{ post.title }}
+
+                                        </a>
+
+
+                                    </div>
+
+                                </div>
+
+                            </article>
+
+                        {% endwith %}
+
+                    </div>
+
+
+                    <!-- ========================================= -->
+                    <!-- OTHER FEATURED POSTS -->
+                    <!-- ========================================= -->
+
+                    <div class="col-md-6 tn-right">
+
+                        <div class="row">
+
+                            {% for post in latest_posts|slice:"1:5" %}
+
+                                <div class="col-md-6 mb-3">
+
+                                    <article class="tn-img">
+
+                                        {% if post.featured_image %}
+
+                                            <img
+                                                src="{{ post.featured_image.image.url }}"
+                                                alt="{{ post.title }}"
+                                            >
+
+                                        {% else %}
+
+                                            <img
+                                                src="{% static 'img/no-image.jpg' %}"
+                                                alt="No image available"
+                                            >
+
+                                        {% endif %}
+
+
+                                        <div class="tn-content">
+
+                                            <div class="tn-content-inner">
+
+
+                                                {% if post.category %}
+
+                                                    <span class="tn-category">
+
+                                                        {{ post.category.category_name }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+
+                                                <a
+                                                    class="tn-date"
+                                                    href="{% url 'post_detail' post.id %}"
+                                                >
+
+                                                    <i class="far fa-clock"></i>
+
+                                                    {{ post.created_at|date:"d M Y" }}
+
+                                                </a>
+
+
+                                                <a
+                                                    class="tn-title"
+                                                    href="{% url 'post_detail' post.id %}"
+                                                >
+
+                                                    {{ post.title }}
+
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </article>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
+
+    <div class="main-news">
+
+        <div class="container">
+
+            <div class="row">
+
+
+                <!-- ============================================= -->
+                <!-- MAIN LEFT COLUMN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-8">
+
+
+                    <!-- ========================================= -->
+                    <!-- LATEST POSTS -->
+                    <!-- ========================================= -->
+
+                    <section class="latest-news">
+
+                        <div class="section-heading">
+
+                            <h2>
+
+                                <i class="fas fa-clock"></i>
+
+                                Latest News
+
+                            </h2>
+
+                            <p>
+                                The newest stories from our blog.
+                            </p>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            {% for post in latest_posts %}
+
+                                <div class="col-md-6 mb-4">
+
+                                    <article class="news-card">
+
+
+                                        <!-- IMAGE -->
+
+                                        <div class="mn-img">
+
+                                            <a
+                                                href="{% url 'post_detail' post.id %}"
+                                            >
+
+                                                {% if post.featured_image %}
+
+                                                    <img
+                                                        src="{{ post.featured_image.image.url }}"
+                                                        alt="{{ post.title }}"
+                                                    >
+
+                                                {% else %}
+
+                                                    <img
+                                                        src="{% static 'img/no-image.jpg' %}"
+                                                        alt="No image available"
+                                                    >
+
+                                                {% endif %}
+
+                                            </a>
+
+                                        </div>
+
+
+                                        <!-- CONTENT -->
+
+                                        <div class="mn-content">
+
+
+                                            <!-- CATEGORY -->
+
+                                            {% if post.category %}
+
+                                                <a
+                                                    class="post-category"
+                                                    href="{% url 'category_posts' post.category.id %}"
+                                                >
+
+                                                    {{ post.category.category_name }}
+
+                                                </a>
+
+                                            {% endif %}
+
+
+                                            <!-- TITLE -->
+
+                                            <h3>
+
+                                                <a
+                                                    class="mn-title"
+                                                    href="{% url 'post_detail' post.id %}"
+                                                >
+
+                                                    {{ post.title }}
+
+                                                </a>
+
+                                            </h3>
+
+
+                                            <!-- DATE -->
+
+                                            <div class="mn-date">
+
+                                                <i class="far fa-clock"></i>
+
+                                                {{ post.created_at|date:"d M Y" }}
+
+                                            </div>
+
+
+                                            <!-- EXCERPT -->
+
+                                            <p>
+
+                                                {% if post.excerpt %}
+
+                                                    {{ post.excerpt|truncatewords:30 }}
+
+                                                {% else %}
+
+                                                    {{ post.content|truncatewords:30 }}
+
+                                                {% endif %}
+
+                                            </p>
+
+
+                                            <!-- READ MORE -->
+
+                                            <a
+                                                href="{% url 'post_detail' post.id %}"
+                                                class="read-more"
+                                            >
+
+                                                Read More
+
+                                                <i class="fas fa-arrow-right"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </article>
+
+                                </div>
+
+
+                            {% empty %}
+
+                                <div class="col-12">
+
+                                    <div class="empty-message">
+
+                                        <h3>
+                                            No published posts yet.
+                                        </h3>
+
+                                        <p>
+                                            Published articles will appear here.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ========================================= -->
+                    <!-- TOP POSTS -->
+                    <!-- ========================================= -->
+
+                    <section class="top-posts mt-5">
+
+                        <div class="section-heading">
+
+                            <h2>
+
+                                <i class="fas fa-chart-line"></i>
+
+                                Top Posts
+
+                            </h2>
+
+                            <p>
+                                Stories receiving the most comments.
+                            </p>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            {% for post in top_posts %}
+
+                                <div class="col-md-6 mb-4">
+
+                                    <article class="news-card">
+
+
+                                        <!-- IMAGE -->
+
+                                        <div class="mn-img">
+
+                                            <a
+                                                href="{% url 'post_detail' post.id %}"
+                                            >
+
+                                                {% if post.featured_image %}
+
+                                                    <img
+                                                        src="{{ post.featured_image.image.url }}"
+                                                        alt="{{ post.title }}"
+                                                    >
+
+                                                {% else %}
+
+                                                    <img
+                                                        src="{% static 'img/no-image.jpg' %}"
+                                                        alt="No image available"
+                                                    >
+
+                                                {% endif %}
+
+                                            </a>
+
+                                        </div>
+
+
+                                        <!-- CONTENT -->
+
+                                        <div class="mn-content">
+
+
+                                            {% if post.category %}
+
+                                                <a
+                                                    class="post-category"
+                                                    href="{% url 'category_posts' post.category.id %}"
+                                                >
+
+                                                    {{ post.category.category_name }}
+
+                                                </a>
+
+                                            {% endif %}
+
+
+                                            <h3>
+
+                                                <a
+                                                    class="mn-title"
+                                                    href="{% url 'post_detail' post.id %}"
+                                                >
+
+                                                    {{ post.title }}
+
+                                                </a>
+
+                                            </h3>
+
+
+                                            <div class="mn-date">
+
+                                                <i class="far fa-clock"></i>
+
+                                                {{ post.created_at|date:"d M Y" }}
+
+                                            </div>
+
+
+                                            <p>
+
+                                                {% if post.excerpt %}
+
+                                                    {{ post.excerpt|truncatewords:30 }}
+
+                                                {% else %}
+
+                                                    {{ post.content|truncatewords:30 }}
+
+                                                {% endif %}
+
+                                            </p>
+
+
+                                            <div class="comment-count">
+
+                                                <i class="far fa-comments"></i>
+
+                                                {{ post.comment_count }}
+
+                                                {% if post.comment_count == 1 %}
+                                                    comment
+                                                {% else %}
+                                                    comments
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
+
+                                    </article>
+
+                                </div>
+
+
+                            {% empty %}
+
+                                <div class="col-12">
+
+                                    <p>
+                                        No top posts available yet.
+                                    </p>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ========================================= -->
+                    <!-- CATEGORY SECTIONS -->
+                    <!-- ========================================= -->
+
+                    <section class="category-news mt-5">
+
+                        <div class="section-heading">
+
+                            <h2>
+
+                                <i class="fas fa-folder-open"></i>
+
+                                Browse By Category
+
+                            </h2>
+
+                            <p>
+                                Find stories by topic.
+                            </p>
+
+                        </div>
+
+
+                        {% for section in category_sections %}
+
+                            <div class="category-section mb-5">
+
+
+                                <!-- CATEGORY HEADER -->
+
+                                <div class="category-heading">
+
+                                    <h3>
+
+                                        <i class="fas fa-folder"></i>
+
+                                        {{ section.category.category_name }}
+
+                                    </h3>
+
+
+                                    <a
+                                        href="{% url 'category_posts' section.category.id %}"
+                                    >
+
+                                        View All
+
+                                        <i class="fas fa-arrow-right"></i>
+
+                                    </a>
+
+                                </div>
+
+
+                                <!-- CATEGORY POSTS -->
+
+                                <div class="row">
+
+                                    {% for post in section.posts %}
+
+                                        <div class="col-md-6 mb-4">
+
+                                            <article class="category-card">
+
+
+                                                <!-- IMAGE -->
+
+                                                {% if post.featured_image %}
+
+                                                    <a
+                                                        href="{% url 'post_detail' post.id %}"
+                                                    >
+
+                                                        <img
+                                                            src="{{ post.featured_image.image.url }}"
+                                                            alt="{{ post.title }}"
+                                                        >
+
+                                                    </a>
+
+                                                {% endif %}
+
+
+                                                <!-- CONTENT -->
+
+                                                <div class="category-card-content">
+
+
+                                                    <div class="mn-date">
+
+                                                        <i class="far fa-clock"></i>
+
+                                                        {{ post.created_at|date:"d M Y" }}
+
+                                                    </div>
+
+
+                                                    <h4>
+
+                                                        <a
+                                                            href="{% url 'post_detail' post.id %}"
+                                                        >
+
+                                                            {{ post.title }}
+
+                                                        </a>
+
+                                                    </h4>
+
+
+                                                    <p>
+
+                                                        {% if post.excerpt %}
+
+                                                            {{ post.excerpt|truncatewords:18 }}
+
+                                                        {% else %}
+
+                                                            {{ post.content|truncatewords:18 }}
+
+                                                        {% endif %}
+
+                                                    </p>
+
+                                                </div>
+
+                                            </article>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="empty-message">
+
+                                <p>
+                                    No categories have published posts yet.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </section>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- RIGHT SIDEBAR -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-4">
+
+                    <aside class="sidebar">
+
+
+                        <!-- ===================================== -->
+                        <!-- CATEGORIES -->
+                        <!-- ===================================== -->
+
+                        <div class="sidebar-widget">
+
+                            <div class="sidebar-title">
+
+                                <h2>
+
+                                    <i class="fas fa-folder"></i>
+
+                                    Categories
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="category">
+
+                                <ul class="fa-ul">
+
+                                    {% for category in categories %}
+
+                                        <li>
+
+                                            <span class="fa-li">
+
+                                                <i class="far fa-arrow-alt-circle-right"></i>
+
+                                            </span>
+
+
+                                            <a
+                                                href="{% url 'category_posts' category.id %}"
+                                            >
+
+                                                {{ category.category_name }}
+
+                                            </a>
+
+                                        </li>
+
+
+                                    {% empty %}
+
+                                        <li>
+                                            No categories available.
+                                        </li>
+
+                                    {% endfor %}
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- TAGS -->
+                        <!-- ===================================== -->
+
+                        <div class="sidebar-widget">
+
+                            <div class="sidebar-title">
+
+                                <h2>
+
+                                    <i class="fas fa-tags"></i>
+
+                                    Tags
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="tags">
+
+                                {% for tag in tags %}
+
+                                    <a
+                                        href="{% url 'tag_posts' tag.slug %}"
+                                    >
+
+                                        #{{ tag.tg_name }}
+
+                                    </a>
+
+                                {% empty %}
+
+                                    <p>
+                                        No tags available yet.
+                                    </p>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- ADVERTISEMENT -->
+                        <!-- ===================================== -->
+
+                        <div class="sidebar-widget">
+
+                            <div class="sidebar-title">
+
+                                <h2>
+
+                                    <i class="fas fa-ad"></i>
+
+                                    Advertisement
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="image">
+
+                                <img
+                                    src="{% static 'img/adds-1.jpg' %}"
+                                    alt="Advertisement"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- SECOND ADVERTISEMENT -->
+                        <!-- ===================================== -->
+
+                        <div class="sidebar-widget">
+
+                            <div class="sidebar-title">
+
+                                <h2>
+
+                                    <i class="fas fa-ad"></i>
+
+                                    More Ads
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="image">
+
+                                <div class="row">
+
+                                    <div class="col-sm-6">
+
+                                        <img
+                                            src="{% static 'img/adds-2.jpg' %}"
+                                            alt="Advertisement"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="col-sm-6">
+
+                                        <img
+                                            src="{% static 'img/adds-2.jpg' %}"
+                                            alt="Advertisement"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </aside>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}
+

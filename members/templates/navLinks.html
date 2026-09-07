@@ -1,0 +1,363 @@
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container-fluid">
+
+
+        <!-- ================================================= -->
+        <!-- HAMBURGER BUTTON -->
+        <!-- ================================================= -->
+
+        <button
+            class="navbar-toggler me-2"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#mainOffcanvas"
+            aria-controls="mainOffcanvas"
+            aria-label="Open navigation menu"
+        >
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <!-- ================================================= -->
+        <!-- WEBSITE NAME / LOGO -->
+        <!-- ================================================= -->
+
+        <a
+            class="navbar-brand me-auto"
+            href="{% url 'home' %}"
+        >
+            My Blog
+        </a>
+
+
+        <!-- ================================================= -->
+        <!-- SEARCH FORM -->
+        <!-- ================================================= -->
+
+        <form
+            method="GET"
+            action="{% url 'search' %}"
+            class="d-flex"
+        >
+
+            <input
+                type="search"
+                name="q"
+                class="form-control me-2"
+                placeholder="Search..."
+                aria-label="Search"
+            >
+
+            <button
+                type="submit"
+                class="btn btn-outline-light"
+            >
+                Search
+            </button>
+
+        </form>
+
+
+    </div>
+
+</nav>
+
+
+
+<!-- ===================================================== -->
+<!-- LEFT OFFCANVAS MENU -->
+<!-- ===================================================== -->
+
+<div
+    class="offcanvas offcanvas-start text-bg-dark"
+    tabindex="-1"
+    id="mainOffcanvas"
+    aria-labelledby="mainOffcanvasLabel"
+>
+
+
+    <!-- ================================================= -->
+    <!-- OFFCANVAS HEADER -->
+    <!-- ================================================= -->
+
+    <div class="offcanvas-header">
+
+        <h5
+            class="offcanvas-title"
+            id="mainOffcanvasLabel"
+        >
+            My Blog
+        </h5>
+
+
+        <!-- CLOSE BUTTON -->
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+        ></button>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- OFFCANVAS BODY -->
+    <!-- ================================================= -->
+
+    <div class="offcanvas-body">
+
+
+        <!-- ================================================= -->
+        <!-- MAIN NAVIGATION -->
+        <!-- ================================================= -->
+
+        <ul class="navbar-nav">
+
+
+            <!-- HOME -->
+
+            <li class="nav-item mb-2">
+
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'home' %}"
+                >
+                    Home
+                </a>
+
+            </li>
+
+
+            <!-- CATEGORIES -->
+
+           {% if user.is_authenticated and user.is_staff %}
+
+               <li class="nav-item">
+                   <a
+                        class="nav-link"
+                        href="{% url 'category_management' %}"
+                    >
+                        Category Management
+                   </a>
+               </li>
+
+           {% endif %}
+
+           <li class="nav-item">
+               <a
+                    class="nav-link"
+                    href="{% url 'categories' %}"
+                >
+                    Categories
+               </a>
+           </li>
+
+           <li class="nav-item">
+
+               <a
+                    class="nav-link"
+                    href="{% url 'contact' %}"
+                >
+                    Contact
+               </a>
+
+           </li>
+
+
+
+            <!-- ================================================= -->
+            <!-- STAFF / ADMIN LINKS -->
+            <!-- ================================================= -->
+
+            {% if user.is_authenticated and user.is_staff %}
+
+
+                <!-- DASHBOARD -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'dashboard' %}"
+                    >
+                        Dashboard
+                    </a>
+
+                </li>
+
+
+                <!-- POSTS -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'posts' %}"
+                    >
+                        Posts
+                    </a>
+
+                </li>
+
+
+                <!-- TAGS -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'tags_management' %}"
+                    >
+                        Tags
+                    </a>
+
+                </li>
+
+
+                <!-- AUTHORS -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'authors' %}"
+                    >
+                        Authors
+                    </a>
+
+                </li>
+
+
+                <!-- COMMENTS -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'comments' %}"
+                    >
+                        Comments
+                    </a>
+
+                </li>
+
+
+                <!-- MEDIA -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        class="nav-link text-white"
+                        href="{% url 'media_management' %}"
+                    >
+                        Media
+                    </a>
+
+                </li>
+
+
+                <!-- DIVIDER -->
+
+                <hr class="border-secondary">
+
+
+            {% endif %}
+
+
+
+            <!-- ================================================= -->
+            <!-- AUTHENTICATION -->
+            <!-- ================================================= -->
+
+            {% if user.is_authenticated %}
+
+
+                <!-- USERNAME -->
+
+                <li class="nav-item mb-3">
+
+                    <span class="text-white">
+
+                        Welcome,
+                        <strong>{{ user.username }}</strong>
+
+                    </span>
+
+                </li>
+
+
+                <!-- PROFILE -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        href="{% url 'profile' %}"
+                        class="nav-link text-white"
+                    >
+                        My Profile
+                    </a>
+
+                </li>
+
+
+                <!-- LOGOUT -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        href="{% url 'logout' %}"
+                        class="nav-link text-white"
+                    >
+                        Logout
+                    </a>
+
+                </li>
+
+
+            {% else %}
+
+
+                <!-- LOGIN -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="nav-link text-white"
+                    >
+                        Login
+                    </a>
+
+                </li>
+
+
+                <!-- REGISTER -->
+
+                <li class="nav-item mb-2">
+
+                    <a
+                        href="{% url 'register' %}"
+                        class="nav-link text-white"
+                    >
+                        Register
+                    </a>
+
+                </li>
+
+
+            {% endif %}
+
+
+        </ul>
+
+
+    </div>
+
+</div>
+

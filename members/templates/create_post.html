@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Create New Post
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="fw-bold">
+                Create New Post
+            </h1>
+
+            <p class="text-muted">
+                Write and publish a new blog article.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'posts' %}"
+            class="btn btn-secondary"
+        >
+            ← Back to Posts
+        </a>
+
+    </div>
+
+
+    <hr>
+
+
+    <!-- ===================================================== -->
+    <!-- CREATE POST FORM -->
+    <!-- ===================================================== -->
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- ================================================= -->
+        <!-- POST TITLE -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="title"
+                class="form-label fw-bold"
+            >
+                Post Title
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                id="title"
+                class="form-control"
+                placeholder="Enter your post title"
+                required
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- AUTHOR -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="author"
+                class="form-label fw-bold"
+            >
+                Author
+            </label>
+
+            <select
+                name="author"
+                id="author"
+                class="form-control"
+                required
+            >
+
+                <option value="">
+                    -- Select Author --
+                </option>
+
+                {% for author in authors %}
+
+                    <option value="{{ author.id }}">
+                        {{ author.username }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CATEGORY -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="category"
+                class="form-label fw-bold"
+            >
+                Category
+            </label>
+
+            <select
+                name="category"
+                id="category"
+                class="form-control"
+                required
+            >
+
+                <option value="">
+                    -- Select Category --
+                </option>
+
+                {% for category in categories %}
+
+                    <option value="{{ category.id }}">
+                        {{ category.category_name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- TAGS -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="tags"
+                class="form-label fw-bold"
+            >
+                Tags
+            </label>
+
+            <select
+                name="tags"
+                id="tags"
+                class="form-control"
+                multiple
+            >
+
+                {% for tag in tags %}
+
+                    <option value="{{ tag.id }}">
+                        {{ tag.tg_name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <small class="text-muted">
+                Hold Command on Mac to select multiple tags.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- EXCERPT -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="excerpt"
+                class="form-label fw-bold"
+            >
+                Excerpt
+            </label>
+
+            <textarea
+                name="excerpt"
+                id="excerpt"
+                class="form-control"
+                rows="4"
+                placeholder="Write a short description of your article..."
+            ></textarea>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- POST CONTENT -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="content"
+                class="form-label fw-bold"
+            >
+                Post Content
+            </label>
+
+            <textarea
+                name="content"
+                id="content"
+                class="form-control"
+                rows="12"
+                placeholder="Write your article here..."
+                required
+            ></textarea>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- STATUS -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                for="status"
+                class="form-label fw-bold"
+            >
+                Status
+            </label>
+
+            <select
+                name="status"
+                id="status"
+                class="form-control"
+                required
+            >
+
+                <option value="draft">
+                    Draft
+                </option>
+
+                <option value="published">
+                    Published
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- FEATURED IMAGE -->
+        <!-- ================================================= -->
+
+        <div class="mb-4">
+
+            <label
+                for="featured_image"
+                class="form-label fw-bold"
+            >
+                Featured Image
+            </label>
+
+            <select
+                name="featured_image"
+                id="featured_image"
+                class="form-control"
+            >
+
+                <option value="">
+                    -- Select an image from Media Library --
+                </option>
+
+                {% for item in media %}
+
+                    <option value="{{ item.id }}">
+                        {{ item.title }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <small class="text-muted">
+                Select an existing image from your Media Library.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- FORM BUTTONS -->
+        <!-- ================================================= -->
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Create Post
+        </button>
+
+        <a
+            href="{% url 'posts' %}"
+            class="btn btn-secondary ms-2"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
