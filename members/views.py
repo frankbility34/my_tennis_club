@@ -201,7 +201,7 @@ def categories(request):
 def category_management(request):
     categories = Category.objects.all()
 
-    return render(request, "category_Management.html", {
+    return render(request, "category_management.html", {
         "categories": categories
     })   
 
