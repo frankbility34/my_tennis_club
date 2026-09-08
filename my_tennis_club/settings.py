@@ -276,6 +276,14 @@ if os.environ.get("CLOUDINARY_CLOUD_NAME"):
 
     }
 
+print("=== CLOUDINARY CONFIG CHECK ===")
+print("Cloud name set:", bool(os.environ.get("CLOUDINARY_CLOUD_NAME")))
+print("API key set:", bool(os.environ.get("CLOUDINARY_API_KEY")))
+print("API secret set:", bool(os.environ.get("CLOUDINARY_API_SECRET")))
+print("Cloud name:", os.environ.get("CLOUDINARY_CLOUD_NAME"))
+print("API key:", os.environ.get("CLOUDINARY_API_KEY"))
+print("================================")    
+
 
 
 
