@@ -5,8 +5,9 @@ Django settings for my_tennis_club project.
 import os
 from pathlib import Path
 
-import dj_database_url
 import cloudinary
+import dj_database_url
+
 
 
 # ============================================================
@@ -290,8 +291,6 @@ if os.environ.get("CLOUDINARY_CLOUD_NAME"):
 # ============================================================
 # CLOUDINARY PYTHON SDK CONFIGURATION
 # ============================================================
-
-import cloudinary
 
 cloudinary.config(
     cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
