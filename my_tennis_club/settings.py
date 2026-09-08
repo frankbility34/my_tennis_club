@@ -263,34 +263,21 @@ STORAGES = {
 
 
 # ============================================================
+# CLOUDINARY CONFIGURATION
+# ============================================================
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+}
+
+
+# ============================================================
 # CLOUDINARY MEDIA STORAGE
 # ============================================================
 
-CLOUDINARY_CLOUD_NAME = os.environ.get(
-    "CLOUDINARY_CLOUD_NAME"
-)
-
-CLOUDINARY_API_KEY = os.environ.get(
-    "CLOUDINARY_API_KEY"
-)
-
-CLOUDINARY_API_SECRET = os.environ.get(
-    "CLOUDINARY_API_SECRET"
-)
-
-
-if (
-    CLOUDINARY_CLOUD_NAME
-    and CLOUDINARY_API_KEY
-    and CLOUDINARY_API_SECRET
-):
-
-    cloudinary.config(
-        cloud_name=CLOUDINARY_CLOUD_NAME,
-        api_key=CLOUDINARY_API_KEY,
-        api_secret=CLOUDINARY_API_SECRET,
-        secure=True,
-    )
+if os.environ.get("CLOUDINARY_CLOUD_NAME"):
 
     STORAGES["default"] = {
         "BACKEND": (
@@ -300,39 +287,17 @@ if (
     }
 
 
-print("=== CLOUDINARY CONFIG CHECK ===")
-print(
-    "Cloud name set:",
-    bool(CLOUDINARY_CLOUD_NAME)
-)
-print(
-    "API key set:",
-    bool(CLOUDINARY_API_KEY)
-)
-print(
-    "API secret set:",
-    bool(CLOUDINARY_API_SECRET)
-)
-print(
-    "Cloud name:",
-    CLOUDINARY_CLOUD_NAME
-)
-print(
-    "API key:",
-    CLOUDINARY_API_KEY
-)
-print("================================")
+# ============================================================
+# CLOUDINARY PYTHON SDK CONFIGURATION
+# ============================================================
 
 import cloudinary
 
-print("=== CLOUDINARY RUNTIME CHECK ===")
-print("Cloudinary config cloud_name:", cloudinary.config().cloud_name)
-print("Cloudinary config api_key:", cloudinary.config().api_key)
-print("Cloudinary config api_secret set:", bool(cloudinary.config().api_secret))
-print("================================")
-
-
-
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+)
 
 
 
