@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import dj_database_url
+import cloudinary
 
 
 # ============================================================
@@ -265,24 +266,62 @@ STORAGES = {
 # CLOUDINARY MEDIA STORAGE
 # ============================================================
 
-if os.environ.get("CLOUDINARY_CLOUD_NAME"):
+CLOUDINARY_CLOUD_NAME = os.environ.get(
+    "CLOUDINARY_CLOUD_NAME"
+)
+
+CLOUDINARY_API_KEY = os.environ.get(
+    "CLOUDINARY_API_KEY"
+)
+
+CLOUDINARY_API_SECRET = os.environ.get(
+    "CLOUDINARY_API_SECRET"
+)
+
+
+if (
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and CLOUDINARY_API_SECRET
+):
+
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+        secure=True,
+    )
 
     STORAGES["default"] = {
-
         "BACKEND": (
             "cloudinary_storage.storage."
             "MediaCloudinaryStorage"
         ),
-
     }
 
+
 print("=== CLOUDINARY CONFIG CHECK ===")
-print("Cloud name set:", bool(os.environ.get("CLOUDINARY_CLOUD_NAME")))
-print("API key set:", bool(os.environ.get("CLOUDINARY_API_KEY")))
-print("API secret set:", bool(os.environ.get("CLOUDINARY_API_SECRET")))
-print("Cloud name:", os.environ.get("CLOUDINARY_CLOUD_NAME"))
-print("API key:", os.environ.get("CLOUDINARY_API_KEY"))
-print("================================")    
+print(
+    "Cloud name set:",
+    bool(CLOUDINARY_CLOUD_NAME)
+)
+print(
+    "API key set:",
+    bool(CLOUDINARY_API_KEY)
+)
+print(
+    "API secret set:",
+    bool(CLOUDINARY_API_SECRET)
+)
+print(
+    "Cloud name:",
+    CLOUDINARY_CLOUD_NAME
+)
+print(
+    "API key:",
+    CLOUDINARY_API_KEY
+)
+print("================================")
 
 
 
