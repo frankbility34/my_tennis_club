@@ -21,10 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # ============================================================
 
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-development-only-key"
-)
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+if not SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY environment variable is not set."
+    )
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
@@ -339,18 +341,25 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 
 if not DEBUG:
 
+    # Force HTTPS in production
     SECURE_SSL_REDIRECT = True
 
+    # Only send session cookies over HTTPS
     SESSION_COOKIE_SECURE = True
 
+    # Only send CSRF cookies over HTTPS
     CSRF_COOKIE_SECURE = True
 
+    # Tell browsers to use HTTPS for one year
     SECURE_HSTS_SECONDS = 31536000
 
+    # Apply HSTS to subdomains
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
+    # Allow the site to be included in browser HSTS preload lists
     SECURE_HSTS_PRELOAD = True
 
+    # Render terminates HTTPS before forwarding the request
     SECURE_PROXY_SSL_HEADER = (
         "HTTP_X_FORWARDED_PROTO",
         "https",
