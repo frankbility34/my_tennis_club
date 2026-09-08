@@ -19,9 +19,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # ============================================================
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-development-only-key"
+)
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 
 # Render automatically provides RENDER_EXTERNAL_HOSTNAME.
@@ -43,6 +46,30 @@ ALLOWED_HOSTS = [
 
 
 # ============================================================
+# CSRF TRUSTED ORIGINS
+# ============================================================
+
+CSRF_TRUSTED_ORIGINS = []
+
+if render_hostname:
+    CSRF_TRUSTED_ORIGINS.append(
+        f"https://{render_hostname}"
+    )
+
+extra_csrf_origins = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    ""
+)
+
+if extra_csrf_origins:
+    CSRF_TRUSTED_ORIGINS.extend(
+        origin.strip()
+        for origin in extra_csrf_origins.split(",")
+        if origin.strip()
+    )
+
+
+# ============================================================
 # APPLICATIONS
 # ============================================================
 
@@ -51,7 +78,6 @@ INSTALLED_APPS = [
 
     "jazzmin",
     "cloudinary",
-    "cloudinary_storage",
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -122,21 +148,13 @@ WSGI_APPLICATION = "my_tennis_club.wsgi.application"
 # DATABASE
 # ============================================================
 
-if os.environ.get("RENDER_DATABASE_URL"):
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
 
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("RENDER_DATABASE_URL"),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-
-elif os.environ.get("DATABASE_URL"):
-
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=os.environ.get("DATABASE_URL"),
+            default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
@@ -222,17 +240,44 @@ MEDIA_ROOT = BASE_DIR / "media"
 # ============================================================
 
 STORAGES = {
+
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+
+        "BACKEND": (
+            "django.core.files.storage.FileSystemStorage"
+        ),
+
     },
 
     "staticfiles": {
+
         "BACKEND": (
             "whitenoise.storage."
-            "CompressedManifestStaticFilesStorage"
+            "CompressedStaticFilesStorage"
         ),
+
     },
+
 }
+
+
+# ============================================================
+# CLOUDINARY MEDIA STORAGE
+# ============================================================
+
+if os.environ.get("CLOUDINARY_CLOUD_NAME"):
+
+    STORAGES["default"] = {
+
+        "BACKEND": (
+            "cloudinary_storage.storage."
+            "MediaCloudinaryStorage"
+        ),
+
+    }
+
+
+
 
 
 
@@ -241,28 +286,27 @@ STORAGES = {
 # EMAIL
 # ============================================================
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+)
 
-        "OPTIONS": {
-            "host": os.environ.get("EMAIL_HOST", ""),
-            "port": int(
-                os.environ.get("EMAIL_PORT", "587")
-            ),
-            "username": os.environ.get(
-                "EMAIL_HOST_USER",
-                ""
-            ),
-            "password": os.environ.get(
-                "EMAIL_HOST_PASSWORD",
-                ""
-            ),
-            "use_tls": True,
-        },
-    },
-}
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 
+EMAIL_PORT = int(
+    os.environ.get("EMAIL_PORT", "587")
+)
+
+EMAIL_HOST_USER = os.environ.get(
+    "EMAIL_HOST_USER",
+    ""
+)
+
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD",
+    ""
+)
+
+EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
