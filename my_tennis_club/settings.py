@@ -323,6 +323,14 @@ print(
 )
 print("================================")
 
+import cloudinary
+
+print("=== CLOUDINARY RUNTIME CHECK ===")
+print("Cloudinary config cloud_name:", cloudinary.config().cloud_name)
+print("Cloudinary config api_key:", cloudinary.config().api_key)
+print("Cloudinary config api_secret set:", bool(cloudinary.config().api_secret))
+print("================================")
+
 
 
 
