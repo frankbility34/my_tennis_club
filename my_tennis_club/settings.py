@@ -304,26 +304,30 @@ cloudinary.config(
 
 
 
+# ============================================================
+# EMAIL CONFIGURATION — RESEND API
+# ============================================================
 
-
-
-import os
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.hostinger.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
-
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
     "info@msannewsblog.com"
 )
 
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
+ADMIN_EMAIL = os.environ.get(
+    "ADMIN_EMAIL",
+    "info@msannewsblog.com"
+)
+
+# Production safety check
+if os.environ.get("RENDER"):
+
+    if not RESEND_API_KEY:
+        raise RuntimeError(
+            "RESEND_API_KEY environment variable is not set."
+        )
+
 
 # ============================================================
 # HTTPS / SECURITY

@@ -742,112 +742,184 @@ def comments(request):
 
 
 
+
+
+
+
+
 @login_required
 def create_comment(request, post_id):
 
-    if request.method == "POST":
+    # =========================================================
+    # ONLY ACCEPT POST REQUESTS
+    # =========================================================
 
-        content = request.POST.get("content", "").strip()
+    if request.method != "POST":
 
-        if not content:
-            messages.error(
-                request,
-                "Comment cannot be empty."
-            )
-
-            return redirect(
-                "post_detail",
-                post_id=post_id
-            )
-
-        post = get_object_or_404(
-            Post,
-            id=post_id,
-            status="published"
+        return redirect(
+            "post_detail",
+            post_id=post_id
         )
 
-        # ============================================================
-        # CREATE COMMENT
-        # ============================================================
+    # =========================================================
+    # GET COMMENT CONTENT
+    # =========================================================
 
-        comment = Comment.objects.create(
-            post=post,
-            user=request.user,
-            content=content
-        )
+    content = request.POST.get(
+        "content",
+        ""
+    ).strip()
 
-        # ============================================================
-        # TEMPORARY DATABASE / COMMENT TEST
-        # ============================================================
+    if not content:
 
-        print("======================================")
-        print("COMMENT CREATED")
-        print("COMMENT ID:", comment.id)
-        print("COMMENT USER:", comment.user.username)
-        print("COMMENT STATUS:", comment.status)
-        print("TOTAL COMMENTS NOW:", Comment.objects.count())
-        print("======================================")
-
-        # ============================================================
-        # SEND EMAIL NOTIFICATION
-        # ============================================================
-
-        try:
-
-            send_mail(
-                subject=f"New Comment Awaiting Approval - {post.title}",
-
-                message=(
-                    f"A new comment has been submitted to MSAN News Blog.\n\n"
-
-                    f"Post: {post.title}\n"
-                    f"Author: {request.user.get_username()}\n"
-                    f"Email: {request.user.email}\n\n"
-
-                    f"Comment:\n"
-                    f"{content}\n\n"
-
-                    f"The comment is currently awaiting approval.\n"
-                    f"Please log in to the admin/comment management area "
-                    f"to approve or reject it."
-                ),
-
-                from_email=settings.DEFAULT_FROM_EMAIL,
-
-                recipient_list=[
-                    "info@msannewsblog.com"
-                ],
-
-                fail_silently=True,
-            )
-
-            print("COMMENT EMAIL SENT SUCCESSFULLY")
-
-        except Exception as e:
-
-            print(
-                "COMMENT EMAIL ERROR:",
-                repr(e)
-            )
-
-        # ============================================================
-        # SUCCESS MESSAGE
-        # ============================================================
-
-        messages.success(
+        messages.error(
             request,
-            "Your comment has been submitted for review."
+            "Comment cannot be empty."
         )
 
         return redirect(
             "post_detail",
-            post_id=post.id
+            post_id=post_id
         )
+
+    # =========================================================
+    # GET PUBLISHED POST
+    # =========================================================
+
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        status="published"
+    )
+
+    # =========================================================
+    # CREATE COMMENT
+    # =========================================================
+
+    comment = Comment.objects.create(
+        post=post,
+        user=request.user,
+        content=content
+    )
+
+    # =========================================================
+    # DATABASE DEBUG INFORMATION
+    # =========================================================
+
+    print("======================================")
+    print("COMMENT CREATED")
+    print("COMMENT ID:", comment.id)
+    print("COMMENT USER:", comment.user.username)
+    print("COMMENT STATUS:", comment.status)
+    print(
+        "TOTAL COMMENTS NOW:",
+        Comment.objects.count()
+    )
+    print("DATABASE:", connection.vendor)
+    print("======================================")
+
+    # =========================================================
+    # SEND EMAIL USING RESEND
+    # =========================================================
+
+    try:
+
+        resend.api_key = settings.RESEND_API_KEY
+
+        params = {
+            "from": settings.DEFAULT_FROM_EMAIL,
+
+            "to": [
+                settings.ADMIN_EMAIL
+            ],
+
+            "subject": (
+                "New Comment Awaiting Approval - "
+                f"{post.title}"
+            ),
+
+            "html": f"""
+                <h2>New Comment Awaiting Approval</h2>
+
+                <p>
+                    A new comment has been submitted
+                    to MSAN News Blog.
+                </p>
+
+                <hr>
+
+                <p>
+                    <strong>Post:</strong>
+                    {post.title}
+                </p>
+
+                <p>
+                    <strong>Author:</strong>
+                    {request.user.get_username()}
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    {request.user.email}
+                </p>
+
+                <p>
+                    <strong>Comment:</strong>
+                </p>
+
+                <blockquote>
+                    {content}
+                </blockquote>
+
+                <hr>
+
+                <p>
+                    <strong>Status:</strong>
+                    Pending approval
+                </p>
+
+                <p>
+                    Please log in to the
+                    comment management area
+                    to approve or reject this comment.
+                </p>
+            """
+        }
+
+        email = resend.Emails.send(params)
+
+        print("======================================")
+        print("COMMENT EMAIL: SENT SUCCESSFULLY")
+        print("RESEND RESPONSE:", email)
+        print("======================================")
+
+    except Exception as e:
+
+        # The comment remains saved even if
+        # the email notification fails.
+
+        print("======================================")
+        print(
+            "COMMENT EMAIL ERROR:",
+            repr(e)
+        )
+        print("======================================")
+
+    # =========================================================
+    # SUCCESS MESSAGE
+    # =========================================================
+
+    messages.success(
+        request,
+        "Your comment has been submitted for review."
+    )
 
     return redirect(
         "post_detail",
-        post_id=post_id
+        post_id=post.id
     )
+
+
 
 
 
