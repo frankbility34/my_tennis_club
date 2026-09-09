@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail, resend
 from django.conf import settings
+from django.core.mail import send_mail, get_connection
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
 from django.shortcuts import render
@@ -741,6 +741,7 @@ def comments(request):
 
 
 
+
 @login_required
 def create_comment(request, post_id):
 
@@ -749,7 +750,6 @@ def create_comment(request, post_id):
         content = request.POST.get("content", "").strip()
 
         if not content:
-
             messages.error(
                 request,
                 "Comment cannot be empty."
@@ -766,9 +766,9 @@ def create_comment(request, post_id):
             status="published"
         )
 
-        # =====================================================
+        # ============================================================
         # CREATE COMMENT
-        # =====================================================
+        # ============================================================
 
         comment = Comment.objects.create(
             post=post,
@@ -776,9 +776,9 @@ def create_comment(request, post_id):
             content=content
         )
 
-        # =====================================================
-        # COMMENT DATABASE LOG
-        # =====================================================
+        # ============================================================
+        # TEMPORARY DATABASE / COMMENT TEST
+        # ============================================================
 
         print("======================================")
         print("COMMENT CREATED")
@@ -788,29 +788,17 @@ def create_comment(request, post_id):
         print("TOTAL COMMENTS NOW:", Comment.objects.count())
         print("======================================")
 
-        # =====================================================
-        # SEND ADMIN EMAIL THROUGH RESEND API
-        # =====================================================
+        # ============================================================
+        # SEND EMAIL NOTIFICATION
+        # ============================================================
 
         try:
 
-            resend.api_key = settings.RESEND_API_KEY
+            send_mail(
+                subject=f"New Comment Awaiting Approval - {post.title}",
 
-            params = {
-                "from": "MSAN News Blog <info@msannewsblog.com>",
-
-                "to": [
-                    "info@msannewsblog.com"
-                ],
-
-                "subject": (
-                    f"New Comment Awaiting Approval - "
-                    f"{post.title}"
-                ),
-
-                "text": (
-                    f"A new comment has been submitted "
-                    f"to MSAN News Blog.\n\n"
+                message=(
+                    f"A new comment has been submitted to MSAN News Blog.\n\n"
 
                     f"Post: {post.title}\n"
                     f"Author: {request.user.get_username()}\n"
@@ -819,30 +807,32 @@ def create_comment(request, post_id):
                     f"Comment:\n"
                     f"{content}\n\n"
 
-                    f"Status: Pending approval\n\n"
-
-                    f"Please log in to the admin/comment "
-                    f"management area to approve or reject it."
+                    f"The comment is currently awaiting approval.\n"
+                    f"Please log in to the admin/comment management area "
+                    f"to approve or reject it."
                 ),
-            }
 
-            email_result = resend.Emails.send(params)
+                from_email=settings.DEFAULT_FROM_EMAIL,
 
-            print("======================================")
-            print("COMMENT EMAIL SENT")
-            print("RESEND RESULT:", email_result)
-            print("======================================")
+                recipient_list=[
+                    "info@msannewsblog.com"
+                ],
+
+                fail_silently=False,
+            )
+
+            print("COMMENT EMAIL SENT SUCCESSFULLY")
 
         except Exception as e:
 
-            print("======================================")
-            print("COMMENT EMAIL ERROR")
-            print(repr(e))
-            print("======================================")
+            print(
+                "COMMENT EMAIL ERROR:",
+                repr(e)
+            )
 
-        # =====================================================
+        # ============================================================
         # SUCCESS MESSAGE
-        # =====================================================
+        # ============================================================
 
         messages.success(
             request,
@@ -858,6 +848,8 @@ def create_comment(request, post_id):
         "post_detail",
         post_id=post_id
     )
+
+
 
 
 
