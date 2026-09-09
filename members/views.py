@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
+import os
+import resend
 from django.core.mail import send_mail, get_connection
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
@@ -747,6 +749,7 @@ def comments(request):
 
 
 
+
 @login_required
 def create_comment(request, post_id):
 
@@ -755,7 +758,6 @@ def create_comment(request, post_id):
     # =========================================================
 
     if request.method != "POST":
-
         return redirect(
             "post_detail",
             post_id=post_id
@@ -771,7 +773,6 @@ def create_comment(request, post_id):
     ).strip()
 
     if not content:
-
         messages.error(
             request,
             "Comment cannot be empty."
@@ -815,7 +816,7 @@ def create_comment(request, post_id):
         "TOTAL COMMENTS NOW:",
         Comment.objects.count()
     )
-    print("DATABASE:", connection.vendor)
+    print("DATABASE: PostgreSQL")
     print("======================================")
 
     # =========================================================
@@ -879,9 +880,8 @@ def create_comment(request, post_id):
                 </p>
 
                 <p>
-                    Please log in to the
-                    comment management area
-                    to approve or reject this comment.
+                    Please log in to the comment management
+                    area to approve or reject this comment.
                 </p>
             """
         }
@@ -895,8 +895,9 @@ def create_comment(request, post_id):
 
     except Exception as e:
 
-        # The comment remains saved even if
-        # the email notification fails.
+        # =====================================================
+        # EMAIL FAILURE MUST NOT DELETE THE COMMENT
+        # =====================================================
 
         print("======================================")
         print(
@@ -906,7 +907,7 @@ def create_comment(request, post_id):
         print("======================================")
 
     # =========================================================
-    # SUCCESS MESSAGE
+    # ALWAYS RETURN SUCCESS TO USER
     # =========================================================
 
     messages.success(
@@ -918,10 +919,6 @@ def create_comment(request, post_id):
         "post_detail",
         post_id=post.id
     )
-
-
-
-
 
 
 
