@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail, get_connection
+from django.core.mail import send_mail, resend
 from django.conf import settings
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
@@ -740,6 +740,7 @@ def comments(request):
     )  
 
 
+
 @login_required
 def create_comment(request, post_id):
 
@@ -748,6 +749,7 @@ def create_comment(request, post_id):
         content = request.POST.get("content", "").strip()
 
         if not content:
+
             messages.error(
                 request,
                 "Comment cannot be empty."
@@ -775,7 +777,7 @@ def create_comment(request, post_id):
         )
 
         # =====================================================
-        # TEMPORARY DATABASE TEST
+        # COMMENT DATABASE LOG
         # =====================================================
 
         print("======================================")
@@ -787,48 +789,56 @@ def create_comment(request, post_id):
         print("======================================")
 
         # =====================================================
-        # EMAIL NOTIFICATION
+        # SEND ADMIN EMAIL THROUGH RESEND API
         # =====================================================
 
         try:
 
-            email_connection = get_connection(
-                fail_silently=True
-            )
+            resend.api_key = settings.RESEND_API_KEY
 
-            send_mail(
-                subject=f"New Comment Awaiting Approval - {post.title}",
+            params = {
+                "from": "MSAN News Blog <info@msannewsblog.com>",
 
-                message=(
-                    f"A new comment has been submitted to "
-                    f"MSAN News Blog.\n\n"
-                    f"Post: {post.title}\n"
-                    f"Author: {request.user.get_username()}\n"
-                    f"Email: {request.user.email}\n\n"
-                    f"Comment:\n"
-                    f"{content}\n\n"
-                    f"The comment is currently awaiting approval.\n"
-                    f"Please log in to the admin/comment management "
-                    f"area to approve or reject it."
-                ),
-
-                from_email=DEFAULT_FROM_EMAIL,
-
-                recipient_list=[
+                "to": [
                     "info@msannewsblog.com"
                 ],
 
-                fail_silently=True,
+                "subject": (
+                    f"New Comment Awaiting Approval - "
+                    f"{post.title}"
+                ),
 
-                connection=email_connection,
-            )
+                "text": (
+                    f"A new comment has been submitted "
+                    f"to MSAN News Blog.\n\n"
+
+                    f"Post: {post.title}\n"
+                    f"Author: {request.user.get_username()}\n"
+                    f"Email: {request.user.email}\n\n"
+
+                    f"Comment:\n"
+                    f"{content}\n\n"
+
+                    f"Status: Pending approval\n\n"
+
+                    f"Please log in to the admin/comment "
+                    f"management area to approve or reject it."
+                ),
+            }
+
+            email_result = resend.Emails.send(params)
+
+            print("======================================")
+            print("COMMENT EMAIL SENT")
+            print("RESEND RESULT:", email_result)
+            print("======================================")
 
         except Exception as e:
 
-            print(
-                "COMMENT EMAIL ERROR:",
-                repr(e)
-            )
+            print("======================================")
+            print("COMMENT EMAIL ERROR")
+            print(repr(e))
+            print("======================================")
 
         # =====================================================
         # SUCCESS MESSAGE
@@ -848,6 +858,8 @@ def create_comment(request, post_id):
         "post_detail",
         post_id=post_id
     )
+
+
 
 
 
