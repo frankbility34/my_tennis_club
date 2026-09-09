@@ -818,7 +818,7 @@ def create_comment(request, post_id):
                     "info@msannewsblog.com"
                 ],
 
-                fail_silently=False,
+                fail_silently=True,
             )
 
             print("COMMENT EMAIL SENT SUCCESSFULLY")
