@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
 from django.shortcuts import render
-from django.db.models import Count
+from django.db import connection
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -769,6 +769,16 @@ def create_comment(request, post_id):
             content=content
         )
 
+        # TEMPORARY DATABASE TEST
+        print("======================================")
+        print("COMMENT CREATED")
+        print("COMMENT ID:", comment.id)
+        print("COMMENT USER:", comment.user.username)
+        print("COMMENT STATUS:", comment.status)
+        print("TOTAL COMMENTS NOW:", Comment.objects.count())
+        print("DATABASE:", connection.vendor)
+        print("======================================")
+
         # Notify the site administrator
         try:
 
@@ -788,15 +798,12 @@ def create_comment(request, post_id):
                 ),
 
                 from_email="info@msannewsblog.com",
-
                 recipient_list=["info@msannewsblog.com"],
-
                 fail_silently=False,
             )
 
         except Exception as e:
 
-            # The comment is still saved even if notification fails.
             print(
                 "COMMENT NOTIFICATION EMAIL ERROR:",
                 repr(e)
