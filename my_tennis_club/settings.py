@@ -325,18 +325,21 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # PRODUCTION EMAIL SAFETY CHECK
 # ============================================================
 
-if os.environ.get("RENDER"):
+import os
 
-    if not EMAIL_HOST_USER:
-        raise RuntimeError(
-            "EMAIL_HOST_USER environment variable is not set."
-        )
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-    if not EMAIL_HOST_PASSWORD:
-        raise RuntimeError(
-            "EMAIL_HOST_PASSWORD environment variable is not set."
-        )
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.hostinger.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
 
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL",
+    "info@msannewsblog.com"
+)
 
 # ============================================================
 # HTTPS / SECURITY
