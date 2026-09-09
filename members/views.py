@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
 from django.shortcuts import render
@@ -760,11 +762,45 @@ def create_comment(request, post_id):
             status="published"
         )
 
-        Comment.objects.create(
+        # Create the comment
+        comment = Comment.objects.create(
             post=post,
             user=request.user,
             content=content
         )
+
+        # Notify the site administrator
+        try:
+
+            send_mail(
+                subject=f"New Comment Awaiting Approval - {post.title}",
+
+                message=(
+                    f"A new comment has been submitted to MSAN News Blog.\n\n"
+                    f"Post: {post.title}\n"
+                    f"Author: {request.user.get_username()}\n"
+                    f"Email: {request.user.email}\n\n"
+                    f"Comment:\n"
+                    f"{content}\n\n"
+                    f"The comment is currently awaiting approval.\n"
+                    f"Please log in to the admin/comment management area "
+                    f"to approve or reject it."
+                ),
+
+                from_email="info@msannewsblog.com",
+
+                recipient_list=["info@msannewsblog.com"],
+
+                fail_silently=False,
+            )
+
+        except Exception as e:
+
+            # The comment is still saved even if notification fails.
+            print(
+                "COMMENT NOTIFICATION EMAIL ERROR:",
+                repr(e)
+            )
 
         messages.success(
             request,
@@ -910,6 +946,16 @@ def delete_media(request, media_id):
 
     return redirect("media_management") 
 
+@staff_member_required
+def database_check(request):
+
+    from django.db import connection
+
+    return HttpResponse(
+        f"Database: {connection.vendor}<br>"
+        f"Comments: {Comment.objects.count()}"
+    )    
+
 
 @staff_member_required 
 def dashboard(request):
@@ -981,7 +1027,8 @@ def dashboard(request):
         request,
         "dashboard.html",
         context
-    )          
+    )  
+
 
 
 def search(request):
@@ -1339,8 +1386,68 @@ def edit_profile(request):
     )
 
 
+
 def contact(request):
-    return render(request, "contact.html")    
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip()
+        message = request.POST.get("message", "").strip()
+
+        if not name or not email or not message:
+            messages.error(
+                request,
+                "Please complete all fields before sending your message."
+            )
+
+            return render(
+                request,
+                "contact.html"
+            )
+
+        try:
+
+            send_mail(
+                subject=f"New Contact Message from {name}",
+
+                message=(
+                    f"Name: {name}\n"
+                    f"Email: {email}\n\n"
+                    f"Message:\n"
+                    f"{message}"
+                ),
+
+                from_email="info@msannewsblog.com",
+
+                recipient_list=["info@msannewsblog.com"],
+
+                fail_silently=False,
+            )
+
+            messages.success(
+                request,
+                "Your message has been sent successfully. "
+                "We will get back to you soon."
+            )
+
+        except Exception as e:
+
+            print("CONTACT EMAIL ERROR:", repr(e))
+
+            messages.error(
+                request,
+                "Sorry, your message could not be sent. "
+                "Please try again later."
+            )
+
+        return redirect("contact")
+
+    return render(
+        request,
+        "contact.html"
+    )    
+    
 
 
 

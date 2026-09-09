@@ -1,3 +1,4 @@
+cat > members/templates/dashboard.html <<'EOF'
 {% extends "base.html" %}
 
 {% block title %}
@@ -6,35 +7,28 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 
+    <!-- HEADER -->
     <div class="mb-4">
-
         <h1>Dashboard</h1>
-
         <p class="text-muted">
-            Welcome to your blog management dashboard.
+            Welcome to your MSAN News Blog management dashboard.
         </p>
-
     </div>
 
 
+    <!-- ===================================================== -->
     <!-- MAIN STATISTICS -->
+    <!-- ===================================================== -->
 
     <div class="row">
 
-
         <!-- POSTS -->
-
         <div class="col-lg-3 col-md-6 mb-4">
-
-            <div class="card shadow-sm">
-
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-
-                    <h6 class="text-muted">
-                        POSTS
-                    </h6>
+                    <h6 class="text-muted">POSTS</h6>
 
                     <h2>
                         {{ total_posts }}
@@ -43,25 +37,16 @@
                     <a href="{% url 'posts' %}">
                         View Posts →
                     </a>
-
                 </div>
-
             </div>
-
         </div>
 
 
         <!-- AUTHORS -->
-
         <div class="col-lg-3 col-md-6 mb-4">
-
-            <div class="card shadow-sm">
-
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
-
-                    <h6 class="text-muted">
-                        AUTHORS
-                    </h6>
+                    <h6 class="text-muted">AUTHORS</h6>
 
                     <h2>
                         {{ total_authors }}
@@ -70,20 +55,14 @@
                     <a href="{% url 'authors' %}">
                         View Authors →
                     </a>
-
                 </div>
-
             </div>
-
         </div>
 
 
         <!-- COMMENTS -->
-
         <div class="col-lg-3 col-md-6 mb-4">
-
-            <div class="card shadow-sm">
-
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
 
                     <h6 class="text-muted">
@@ -99,18 +78,13 @@
                     </a>
 
                 </div>
-
             </div>
-
         </div>
 
 
         <!-- MEDIA -->
-
         <div class="col-lg-3 col-md-6 mb-4">
-
-            <div class="card shadow-sm">
-
+            <div class="card shadow-sm h-100">
                 <div class="card-body">
 
                     <h6 class="text-muted">
@@ -126,24 +100,21 @@
                     </a>
 
                 </div>
-
             </div>
-
         </div>
 
     </div>
 
 
-    <!-- SECOND ROW -->
+    <!-- ===================================================== -->
+    <!-- CONTENT OVERVIEW -->
+    <!-- ===================================================== -->
 
     <div class="row">
 
-
-        <!-- CATEGORIES -->
-
         <div class="col-lg-6 mb-4">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
 
                 <div class="card-body">
 
@@ -178,7 +149,7 @@
 
         <div class="col-lg-6 mb-4">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
 
                 <div class="card-body">
 
@@ -211,57 +182,76 @@
     </div>
 
 
+    <!-- ===================================================== -->
     <!-- COMMENT STATUS -->
+    <!-- ===================================================== -->
 
     <div class="row">
 
-        <div class="col-lg-12 mb-4">
+        <div class="col-12 mb-4">
 
             <div class="card shadow-sm">
 
                 <div class="card-body">
 
-                    <h4>
-                        Comment Status
-                    </h4>
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h4 class="mb-0">
+                            Comment Status
+                        </h4>
+
+                        <a
+                            href="{% url 'comments' %}"
+                            class="btn btn-primary btn-sm"
+                        >
+                            Manage Comments
+                        </a>
+
+                    </div>
 
                     <hr>
 
-                    <div class="row">
+                    <div class="row text-center">
+
+                        <!-- APPROVED -->
 
                         <div class="col-md-4">
 
-                            <h5>
+                            <h3>
                                 {{ approved_comments }}
-                            </h5>
+                            </h3>
 
-                            <p>
+                            <p class="text-muted mb-0">
                                 Approved
                             </p>
 
                         </div>
 
 
+                        <!-- PENDING -->
+
                         <div class="col-md-4">
 
-                            <h5>
+                            <h3>
                                 {{ pending_comments }}
-                            </h5>
+                            </h3>
 
-                            <p>
+                            <p class="text-muted mb-0">
                                 Pending
                             </p>
 
                         </div>
 
 
+                        <!-- REJECTED -->
+
                         <div class="col-md-4">
 
-                            <h5>
+                            <h3>
                                 {{ rejected_comments }}
-                            </h5>
+                            </h3>
 
-                            <p>
+                            <p class="text-muted mb-0">
                                 Rejected
                             </p>
 
@@ -278,32 +268,55 @@
     </div>
 
 
+    <!-- ===================================================== -->
     <!-- RECENT POSTS -->
+    <!-- ===================================================== -->
 
     <div class="row">
 
         <div class="col-lg-7 mb-4">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
 
                 <div class="card-body">
 
-                    <h4>
-                        Recent Posts
-                    </h4>
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h4 class="mb-0">
+                            Recent Posts
+                        </h4>
+
+                        <a
+                            href="{% url 'posts' %}"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            View All
+                        </a>
+
+                    </div>
 
                     <hr>
 
                     <div class="table-responsive">
 
-                        <table class="table">
+                        <table class="table table-hover align-middle">
 
                             <thead>
 
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
+
+                                    <th>
+                                        Title
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Date
+                                    </th>
+
                                 </tr>
 
                             </thead>
@@ -319,7 +332,21 @@
                                     </td>
 
                                     <td>
-                                        {{ post.status }}
+
+                                        {% if post.status == "published" %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
                                     </td>
 
                                     <td>
@@ -332,7 +359,10 @@
 
                                 <tr>
 
-                                    <td colspan="3">
+                                    <td
+                                        colspan="3"
+                                        class="text-center text-muted"
+                                    >
                                         No posts yet.
                                     </td>
 
@@ -353,48 +383,108 @@
         </div>
 
 
+        <!-- ================================================= -->
         <!-- RECENT COMMENTS -->
+        <!-- ================================================= -->
 
         <div class="col-lg-5 mb-4">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
 
                 <div class="card-body">
 
-                    <h4>
-                        Recent Comments
-                    </h4>
+                    <div class="d-flex justify-content-between align-items-center">
 
-                    <hr>
+                        <h4 class="mb-0">
+                            Recent Comments
+                        </h4>
 
-                    {% for comment in recent_comments %}
-
-                    <div class="mb-3">
-
-                        <strong>
-                            {{ comment.user.username }}
-                        </strong>
-
-                        <p class="mb-1">
-                            {{ comment.content|truncatewords:12 }}
-                        </p>
-
-                        <small class="text-muted">
-
-                            On:
-                            {{ comment.post.title }}
-
-                        </small>
+                        <a
+                            href="{% url 'comments' %}"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            Manage
+                        </a>
 
                     </div>
 
                     <hr>
 
+
+                    {% for comment in recent_comments %}
+
+                        <div class="mb-3">
+
+                            <div class="d-flex justify-content-between">
+
+                                <strong>
+                                    {{ comment.user.username }}
+                                </strong>
+
+                                {% if comment.status == "pending" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elif comment.status == "approved" %}
+
+                                    <span class="badge bg-success">
+                                        Approved
+                                    </span>
+
+                                {% elif comment.status == "rejected" %}
+
+                                    <span class="badge bg-danger">
+                                        Rejected
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <p class="mb-1 mt-2">
+                                {{ comment.content|truncatewords:12 }}
+                            </p>
+
+
+                            <small class="text-muted d-block">
+
+                                On:
+                                {{ comment.post.title }}
+
+                            </small>
+
+
+                            <small class="text-muted">
+
+                                {{ comment.created_at|date:"M d, Y H:i" }}
+
+                            </small>
+
+                        </div>
+
+                        {% if not forloop.last %}
+                            <hr>
+                        {% endif %}
+
                     {% empty %}
 
-                    <p>
-                        No comments yet.
-                    </p>
+                        <div class="text-center py-3">
+
+                            <p class="text-muted mb-2">
+                                No comments yet.
+                            </p>
+
+                            <a
+                                href="{% url 'comments' %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Comment Management
+                            </a>
+
+                        </div>
 
                     {% endfor %}
 
@@ -404,44 +494,78 @@
 
         </div>
 
-        <div class="card shadow-sm">
+    </div>
 
-            <div class="card-body">
 
-                <h4>
-                    Most Commented Posts
-                </h4>
+    <!-- ===================================================== -->
+    <!-- MOST COMMENTED POSTS -->
+    <!-- ===================================================== -->
 
-                <hr>
+    <div class="row">
 
-                {% for post in popular_posts %}
+        <div class="col-12 mb-4">
 
-                <div class="d-flex justify-content-between mb-3">
+            <div class="card shadow-sm">
 
-                    <span>
-                        {{ post.title }}
-                    </span>
+                <div class="card-body">
 
-                    <strong>
-                        {{ post.comment_count }}
-                    </strong>
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h4 class="mb-0">
+                            Most Commented Posts
+                        </h4>
+
+                        <a
+                            href="{% url 'posts' %}"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            View Posts
+                        </a>
+
+                    </div>
+
+                    <hr>
+
+
+                    {% for post in popular_posts %}
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <span>
+                                {{ post.title }}
+                            </span>
+
+                            <span class="badge bg-primary">
+
+                                {{ post.comment_count }}
+
+                                {% if post.comment_count == 1 %}
+                                    comment
+                                {% else %}
+                                    comments
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-muted mb-0">
+                            No posts available.
+                        </p>
+
+                    {% endfor %}
 
                 </div>
-
-                {% empty %}
-
-                <p>
-                    No posts available.
-                </p>
-
-                {% endfor %}
 
             </div>
 
         </div>
 
-        </div>
+    </div>
 
 </div>
 
 {% endblock %}
+EOF

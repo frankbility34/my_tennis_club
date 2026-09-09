@@ -35,6 +35,7 @@ urlpatterns = [
     path("media/", views.media_management, name="media_management"),
     path("media/upload/", views.upload_media, name="upload_media"),
     path("media/delete/<int:media_id>/", views.delete_media, name="delete_media"),
+    path("database-check/", views.database_check, name="database_check"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("search/", views.search,name="search"),
     path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
