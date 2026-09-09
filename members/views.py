@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection
 from django.conf import settings
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Media
@@ -781,7 +781,12 @@ def create_comment(request, post_id):
         print("======================================")
 
         # Notify the site administrator
+                
         try:
+
+            connection = get_connection(
+                fail_silently=True
+            )
 
             send_mail(
                 subject=f"New Comment Awaiting Approval - {post.title}",
@@ -798,15 +803,16 @@ def create_comment(request, post_id):
                     f"to approve or reject it."
                 ),
 
-                from_email="info@msannewsblog.com",
+                from_email=DEFAULT_FROM_EMAIL,
                 recipient_list=["info@msannewsblog.com"],
-                fail_silently=False,
+                fail_silently=True,
+                connection=connection,
             )
 
         except Exception as e:
 
             print(
-                "COMMENT NOTIFICATION EMAIL ERROR:",
+                "COMMENT EMAIL ERROR:",
                 repr(e)
             )
 
