@@ -953,8 +953,13 @@ def database_check(request):
 
     return HttpResponse(
         f"Database: {connection.vendor}<br>"
-        f"Comments: {Comment.objects.count()}"
-    )    
+        f"Users: {User.objects.count()}<br>"
+        f"Posts: {Post.objects.count()}<br>"
+        f"Comments: {Comment.objects.count()}<br>"
+        f"Categories: {Category.objects.count()}<br>"
+        f"Tags: {Tag.objects.count()}<br>"
+        f"Media: {Media.objects.count()}"
+    )
 
 
 @staff_member_required 
