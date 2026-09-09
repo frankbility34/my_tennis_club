@@ -739,6 +739,7 @@ def comments(request):
         }
     )  
 
+
 @login_required
 def create_comment(request, post_id):
 
@@ -763,28 +764,35 @@ def create_comment(request, post_id):
             status="published"
         )
 
-        # Create the comment
+        # =====================================================
+        # CREATE COMMENT
+        # =====================================================
+
         comment = Comment.objects.create(
             post=post,
             user=request.user,
             content=content
         )
 
+        # =====================================================
         # TEMPORARY DATABASE TEST
+        # =====================================================
+
         print("======================================")
         print("COMMENT CREATED")
         print("COMMENT ID:", comment.id)
         print("COMMENT USER:", comment.user.username)
         print("COMMENT STATUS:", comment.status)
         print("TOTAL COMMENTS NOW:", Comment.objects.count())
-        print("DATABASE:", connection.vendor)
         print("======================================")
 
-        # Notify the site administrator
-                
+        # =====================================================
+        # EMAIL NOTIFICATION
+        # =====================================================
+
         try:
 
-            connection = get_connection(
+            email_connection = get_connection(
                 fail_silently=True
             )
 
@@ -792,21 +800,27 @@ def create_comment(request, post_id):
                 subject=f"New Comment Awaiting Approval - {post.title}",
 
                 message=(
-                    f"A new comment has been submitted to MSAN News Blog.\n\n"
+                    f"A new comment has been submitted to "
+                    f"MSAN News Blog.\n\n"
                     f"Post: {post.title}\n"
                     f"Author: {request.user.get_username()}\n"
                     f"Email: {request.user.email}\n\n"
                     f"Comment:\n"
                     f"{content}\n\n"
                     f"The comment is currently awaiting approval.\n"
-                    f"Please log in to the admin/comment management area "
-                    f"to approve or reject it."
+                    f"Please log in to the admin/comment management "
+                    f"area to approve or reject it."
                 ),
 
                 from_email=DEFAULT_FROM_EMAIL,
-                recipient_list=["info@msannewsblog.com"],
+
+                recipient_list=[
+                    "info@msannewsblog.com"
+                ],
+
                 fail_silently=True,
-                connection=connection,
+
+                connection=email_connection,
             )
 
         except Exception as e:
@@ -815,6 +829,10 @@ def create_comment(request, post_id):
                 "COMMENT EMAIL ERROR:",
                 repr(e)
             )
+
+        # =====================================================
+        # SUCCESS MESSAGE
+        # =====================================================
 
         messages.success(
             request,
@@ -830,6 +848,8 @@ def create_comment(request, post_id):
         "post_detail",
         post_id=post_id
     )
+
+
 
 @staff_member_required
 def approve_comment(request, comment_id):
