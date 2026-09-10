@@ -1,74 +1,70 @@
 <nav class="navbar navbar-dark bg-dark">
 
-    <div class="container-fluid">
+
+<div class="container-fluid">
+
+    <!-- ================================================= -->
+    <!-- HAMBURGER BUTTON -->
+    <!-- ================================================= -->
+
+    <button
+        class="navbar-toggler me-2"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#mainOffcanvas"
+        aria-controls="mainOffcanvas"
+        aria-label="Open navigation menu"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
 
-        <!-- ================================================= -->
-        <!-- HAMBURGER BUTTON -->
-        <!-- ================================================= -->
+    <!-- ================================================= -->
+    <!-- WEBSITE NAME -->
+    <!-- ================================================= -->
+
+    <a
+        class="navbar-brand me-auto"
+        href="{% url 'home' %}"
+    >
+        MSAN News Blog
+    </a>
+
+
+    <!-- ================================================= -->
+    <!-- SEARCH FORM -->
+    <!-- ================================================= -->
+
+    <form
+        method="GET"
+        action="{% url 'search' %}"
+        class="d-flex"
+    >
+        <input
+            type="search"
+            name="q"
+            class="form-control me-2"
+            placeholder="Search..."
+            aria-label="Search"
+        >
 
         <button
-            class="navbar-toggler me-2"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#mainOffcanvas"
-            aria-controls="mainOffcanvas"
-            aria-label="Open navigation menu"
+            type="submit"
+            class="btn btn-outline-light"
         >
-
-            <span class="navbar-toggler-icon"></span>
-
+            Search
         </button>
+    </form>
 
+</div>
 
-        <!-- ================================================= -->
-        <!-- WEBSITE NAME / LOGO -->
-        <!-- ================================================= -->
-
-        <a
-            class="navbar-brand me-auto"
-            href="{% url 'home' %}"
-        >
-            My Blog
-        </a>
-
-
-        <!-- ================================================= -->
-        <!-- SEARCH FORM -->
-        <!-- ================================================= -->
-
-        <form
-            method="GET"
-            action="{% url 'search' %}"
-            class="d-flex"
-        >
-
-            <input
-                type="search"
-                name="q"
-                class="form-control me-2"
-                placeholder="Search..."
-                aria-label="Search"
-            >
-
-            <button
-                type="submit"
-                class="btn btn-outline-light"
-            >
-                Search
-            </button>
-
-        </form>
-
-
-    </div>
 
 </nav>
 
-
-
 <!-- ===================================================== -->
+
 <!-- LEFT OFFCANVAS MENU -->
+
 <!-- ===================================================== -->
 
 <div
@@ -79,285 +75,302 @@
 >
 
 
-    <!-- ================================================= -->
-    <!-- OFFCANVAS HEADER -->
-    <!-- ================================================= -->
+<!-- ================================================= -->
+<!-- OFFCANVAS HEADER -->
+<!-- ================================================= -->
 
-    <div class="offcanvas-header">
+<div class="offcanvas-header">
 
-        <h5
-            class="offcanvas-title"
-            id="mainOffcanvasLabel"
-        >
-            My Blog
-        </h5>
-
-
-        <!-- CLOSE BUTTON -->
-
-        <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-        ></button>
-
-    </div>
+    <h5
+        class="offcanvas-title"
+        id="mainOffcanvasLabel"
+    >
+        MSAN News Blog
+    </h5>
 
 
+    <!-- CLOSE BUTTON -->
 
-    <!-- ================================================= -->
-    <!-- OFFCANVAS BODY -->
-    <!-- ================================================= -->
+    <button
+        type="button"
+        class="btn-close btn-close-white"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+    ></button>
 
-    <div class="offcanvas-body">
+</div>
+
+
+<!-- ================================================= -->
+<!-- OFFCANVAS BODY -->
+<!-- ================================================= -->
+
+<div class="offcanvas-body">
+
+    <ul class="navbar-nav">
 
 
         <!-- ================================================= -->
-        <!-- MAIN NAVIGATION -->
+        <!-- HOME -->
         <!-- ================================================= -->
 
-        <ul class="navbar-nav">
+        <li class="nav-item mb-2">
+
+            <a
+                class="nav-link text-white"
+                href="{% url 'home' %}"
+            >
+                Home
+            </a>
+
+        </li>
 
 
-            <!-- HOME -->
+        <!-- ================================================= -->
+        <!-- ABOUT -->
+        <!-- ================================================= -->
+
+        <li class="nav-item mb-2">
+
+            <a
+                class="nav-link text-white"
+                href="{% url 'about' %}"
+            >
+                About
+            </a>
+
+        </li>
+
+
+        <!-- ================================================= -->
+        <!-- PUBLIC CATEGORIES -->
+        <!-- ================================================= -->
+
+        <li class="nav-item mb-2">
+
+            <a
+                class="nav-link text-white"
+                href="{% url 'categories' %}"
+            >
+                Categories
+            </a>
+
+        </li>
+
+
+        <!-- ================================================= -->
+        <!-- CONTACT -->
+        <!-- ================================================= -->
+
+        <li class="nav-item mb-2">
+
+            <a
+                class="nav-link text-white"
+                href="{% url 'contact' %}"
+            >
+                Contact
+            </a>
+
+        </li>
+
+
+        <!-- ================================================= -->
+        <!-- STAFF / ADMIN LINKS -->
+        <!-- ================================================= -->
+
+        {% if user.is_authenticated and user.is_staff %}
+
+
+            <!-- DASHBOARD -->
 
             <li class="nav-item mb-2">
 
                 <a
                     class="nav-link text-white"
-                    href="{% url 'home' %}"
+                    href="{% url 'dashboard' %}"
                 >
-                    Home
+                    Dashboard
                 </a>
 
             </li>
 
 
-            <!-- CATEGORIES -->
+            <!-- CATEGORY MANAGEMENT -->
 
-           {% if user.is_authenticated and user.is_staff %}
+            <li class="nav-item mb-2">
 
-               <li class="nav-item">
-                   <a
-                        class="nav-link"
-                        href="{% url 'category_management' %}"
-                    >
-                        Category Management
-                   </a>
-               </li>
-
-           {% endif %}
-
-           <li class="nav-item">
-               <a
-                    class="nav-link"
-                    href="{% url 'categories' %}"
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'category_management' %}"
                 >
-                    Categories
-               </a>
-           </li>
+                    Category Management
+                </a>
 
-           <li class="nav-item">
+            </li>
 
-               <a
-                    class="nav-link"
-                    href="{% url 'contact' %}"
+
+            <!-- POSTS -->
+
+            <li class="nav-item mb-2">
+
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'posts' %}"
                 >
-                    Contact
-               </a>
+                    Posts
+                </a>
 
-           </li>
+            </li>
 
 
+            <!-- TAGS -->
 
-            <!-- ================================================= -->
-            <!-- STAFF / ADMIN LINKS -->
-            <!-- ================================================= -->
+            <li class="nav-item mb-2">
 
-            {% if user.is_authenticated and user.is_staff %}
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'tags_management' %}"
+                >
+                    Tags
+                </a>
 
+            </li>
 
-                <!-- DASHBOARD -->
 
-                <li class="nav-item mb-2">
+            <!-- AUTHORS -->
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'dashboard' %}"
-                    >
-                        Dashboard
-                    </a>
+            <li class="nav-item mb-2">
 
-                </li>
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'authors' %}"
+                >
+                    Authors
+                </a>
 
+            </li>
 
-                <!-- POSTS -->
 
-                <li class="nav-item mb-2">
+            <!-- COMMENTS -->
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'posts' %}"
-                    >
-                        Posts
-                    </a>
+            <li class="nav-item mb-2">
 
-                </li>
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'comments' %}"
+                >
+                    Comments
+                </a>
 
+            </li>
 
-                <!-- TAGS -->
 
-                <li class="nav-item mb-2">
+            <!-- MEDIA -->
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'tags_management' %}"
-                    >
-                        Tags
-                    </a>
+            <li class="nav-item mb-2">
 
-                </li>
+                <a
+                    class="nav-link text-white"
+                    href="{% url 'media_management' %}"
+                >
+                    Media
+                </a>
 
+            </li>
 
-                <!-- AUTHORS -->
 
-                <li class="nav-item mb-2">
+            <!-- DIVIDER -->
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'authors' %}"
-                    >
-                        Authors
-                    </a>
+            <hr class="border-secondary">
 
-                </li>
+        {% endif %}
 
 
-                <!-- COMMENTS -->
+        <!-- ================================================= -->
+        <!-- AUTHENTICATION -->
+        <!-- ================================================= -->
 
-                <li class="nav-item mb-2">
+        {% if user.is_authenticated %}
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'comments' %}"
-                    >
-                        Comments
-                    </a>
 
-                </li>
+            <!-- USERNAME -->
 
+            <li class="nav-item mb-3">
 
-                <!-- MEDIA -->
+                <span class="text-white">
 
-                <li class="nav-item mb-2">
+                    Welcome,
+                    <strong>{{ user.username }}</strong>
 
-                    <a
-                        class="nav-link text-white"
-                        href="{% url 'media_management' %}"
-                    >
-                        Media
-                    </a>
+                </span>
 
-                </li>
+            </li>
 
 
-                <!-- DIVIDER -->
+            <!-- PROFILE -->
 
-                <hr class="border-secondary">
+            <li class="nav-item mb-2">
 
+                <a
+                    href="{% url 'profile' %}"
+                    class="nav-link text-white"
+                >
+                    My Profile
+                </a>
 
-            {% endif %}
+            </li>
 
 
+            <!-- LOGOUT -->
 
-            <!-- ================================================= -->
-            <!-- AUTHENTICATION -->
-            <!-- ================================================= -->
+            <li class="nav-item mb-2">
 
-            {% if user.is_authenticated %}
+                <a
+                    href="{% url 'logout' %}"
+                    class="nav-link text-white"
+                >
+                    Logout
+                </a>
 
+            </li>
 
-                <!-- USERNAME -->
 
-                <li class="nav-item mb-3">
+        {% else %}
 
-                    <span class="text-white">
 
-                        Welcome,
-                        <strong>{{ user.username }}</strong>
+            <!-- LOGIN -->
 
-                    </span>
+            <li class="nav-item mb-2">
 
-                </li>
+                <a
+                    href="{% url 'login' %}"
+                    class="nav-link text-white"
+                >
+                    Login
+                </a>
 
+            </li>
 
-                <!-- PROFILE -->
 
-                <li class="nav-item mb-2">
+            <!-- REGISTER -->
 
-                    <a
-                        href="{% url 'profile' %}"
-                        class="nav-link text-white"
-                    >
-                        My Profile
-                    </a>
+            <li class="nav-item mb-2">
 
-                </li>
+                <a
+                    href="{% url 'register' %}"
+                    class="nav-link text-white"
+                >
+                    Register
+                </a>
 
+            </li>
 
-                <!-- LOGOUT -->
 
-                <li class="nav-item mb-2">
+        {% endif %}
 
-                    <a
-                        href="{% url 'logout' %}"
-                        class="nav-link text-white"
-                    >
-                        Logout
-                    </a>
-
-                </li>
-
-
-            {% else %}
-
-
-                <!-- LOGIN -->
-
-                <li class="nav-item mb-2">
-
-                    <a
-                        href="{% url 'login' %}"
-                        class="nav-link text-white"
-                    >
-                        Login
-                    </a>
-
-                </li>
-
-
-                <!-- REGISTER -->
-
-                <li class="nav-item mb-2">
-
-                    <a
-                        href="{% url 'register' %}"
-                        class="nav-link text-white"
-                    >
-                        Register
-                    </a>
-
-                </li>
-
-
-            {% endif %}
-
-
-        </ul>
-
-
-    </div>
+    </ul>
 
 </div>
 
+
+</div>

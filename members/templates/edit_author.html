@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Author | MSAN News Blog
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+
+<div class="row justify-content-center">
+
+    <div class="col-md-8 col-lg-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+                <h3 class="mb-0">
+                    Edit Author
+                </h3>
+            </div>
+
+            <div class="card-body">
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <!-- FIRST NAME -->
+                    <div class="form-group">
+
+                        <label for="first_name">
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="first_name"
+                            id="first_name"
+                            class="form-control"
+                            value="{{ user.first_name }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- LAST NAME -->
+                    <div class="form-group">
+
+                        <label for="last_name">
+                            Last Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="last_name"
+                            id="last_name"
+                            class="form-control"
+                            value="{{ user.last_name }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- USERNAME -->
+                    <div class="form-group">
+
+                        <label for="username">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            class="form-control"
+                            value="{{ user.username }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            class="form-control"
+                            value="{{ user.email }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+                    <div class="mt-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Save Changes
+                        </button>
+
+                        <a
+                            href="{% url 'authors' %}"
+                            class="btn btn-secondary"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

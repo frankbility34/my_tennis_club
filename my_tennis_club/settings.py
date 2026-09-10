@@ -3,12 +3,11 @@ Django settings for my_tennis_club project.
 """
 
 import os
-import resend
 from pathlib import Path
 
 import cloudinary
 import dj_database_url
-
+import resend
 
 
 # ============================================================
@@ -29,19 +28,36 @@ if not SECRET_KEY:
         "SECRET_KEY environment variable is not set."
     )
 
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 
-# Render automatically provides RENDER_EXTERNAL_HOSTNAME.
-render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+# ============================================================
+# HOST CONFIGURATION
+# ============================================================
+
+render_hostname = os.environ.get(
+    "RENDER_EXTERNAL_HOSTNAME"
+)
+
 
 allowed_hosts = os.environ.get(
     "ALLOWED_HOSTS",
     "127.0.0.1,localhost"
 ).split(",")
 
+
+# Add Render hostname automatically
 if render_hostname:
     allowed_hosts.append(render_hostname)
+
+
+# Add your custom domain
+allowed_hosts.extend([
+    "msannewsblog.com",
+    "www.msannewsblog.com",
+])
+
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -50,23 +66,27 @@ ALLOWED_HOSTS = [
 ]
 
 
-
-
 # ============================================================
 # CSRF TRUSTED ORIGINS
 # ============================================================
 
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    "https://msannewsblog.com",
+    "https://www.msannewsblog.com",
+]
+
 
 if render_hostname:
     CSRF_TRUSTED_ORIGINS.append(
         f"https://{render_hostname}"
     )
 
+
 extra_csrf_origins = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
     ""
 )
+
 
 if extra_csrf_origins:
     CSRF_TRUSTED_ORIGINS.extend(
@@ -102,7 +122,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # WhiteNoise serves static files in production
+    # Serve static files efficiently in production
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -127,7 +147,9 @@ ROOT_URLCONF = "my_tennis_club.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "BACKEND": (
+            "django.template.backends.django.DjangoTemplates"
+        ),
 
         "DIRS": [],
 
@@ -135,9 +157,15 @@ TEMPLATES = [
 
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+                (
+                    "django.template.context_processors.request"
+                ),
+                (
+                    "django.contrib.auth.context_processors.auth"
+                ),
+                (
+                    "django.contrib.messages.context_processors.messages"
+                ),
             ],
         },
     },
@@ -157,6 +185,7 @@ WSGI_APPLICATION = "my_tennis_club.wsgi.application"
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+
 if DATABASE_URL:
 
     DATABASES = {
@@ -175,7 +204,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
 
 
 # ============================================================
@@ -223,7 +251,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-
 # ============================================================
 # STATIC FILES
 # ============================================================
@@ -234,7 +261,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # ============================================================
-# MEDIA / USER UPLOADS
+# MEDIA FILES
 # ============================================================
 
 MEDIA_URL = "/media/"
@@ -247,24 +274,18 @@ MEDIA_ROOT = BASE_DIR / "media"
 # ============================================================
 
 STORAGES = {
-
     "default": {
-
         "BACKEND": (
             "django.core.files.storage.FileSystemStorage"
         ),
-
     },
 
     "staticfiles": {
-
         "BACKEND": (
             "whitenoise.storage."
             "CompressedStaticFilesStorage"
         ),
-
     },
-
 }
 
 
@@ -273,9 +294,17 @@ STORAGES = {
 # ============================================================
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
-    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": os.environ.get(
+        "CLOUDINARY_CLOUD_NAME"
+    ),
+
+    "API_KEY": os.environ.get(
+        "CLOUDINARY_API_KEY"
+    ),
+
+    "API_SECRET": os.environ.get(
+        "CLOUDINARY_API_SECRET"
+    ),
 }
 
 
@@ -294,20 +323,26 @@ if os.environ.get("CLOUDINARY_CLOUD_NAME"):
 
 
 # ============================================================
-# CLOUDINARY PYTHON SDK CONFIGURATION
+# CLOUDINARY PYTHON SDK
 # ============================================================
 
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    cloud_name=os.environ.get(
+        "CLOUDINARY_CLOUD_NAME"
+    ),
+
+    api_key=os.environ.get(
+        "CLOUDINARY_API_KEY"
+    ),
+
+    api_secret=os.environ.get(
+        "CLOUDINARY_API_SECRET"
+    ),
 )
 
 
-
-
 # ============================================================
-# EMAIL CONFIGURATION — RESEND API
+# EMAIL CONFIGURATION — RESEND
 # ============================================================
 
 RESEND_API_KEY = os.environ.get(
@@ -317,12 +352,6 @@ RESEND_API_KEY = os.environ.get(
 
 
 resend.api_key = RESEND_API_KEY
-
-
-print(
-    "RESEND API KEY FOUND:",
-    bool(RESEND_API_KEY)
-)
 
 
 DEFAULT_FROM_EMAIL = os.environ.get(
@@ -337,60 +366,88 @@ ADMIN_EMAIL = os.environ.get(
 )
 
 
-# Production safety check
+# ============================================================
+# PRODUCTION EMAIL CHECK
+# ============================================================
 
-if os.environ.get("RENDER"):
+if os.environ.get("RENDER") and not RESEND_API_KEY:
 
-    if not RESEND_API_KEY:
-
-        raise RuntimeError(
-            "RESEND_API_KEY environment variable is not set."
-        )
-
-
-
+    raise RuntimeError(
+        "RESEND_API_KEY environment variable is not set."
+    )
 
 
 # ============================================================
-# HTTPS / SECURITY
+# HTTPS / PRODUCTION SECURITY
 # ============================================================
 
 if not DEBUG:
 
-    # Force HTTPS in production
-    SECURE_SSL_REDIRECT = bool(os.environ.get("RENDER"))
+    # Render handles HTTPS at the proxy.
+    # Redirect normal HTTP requests to HTTPS.
+    SECURE_SSL_REDIRECT = True
 
-    # Only send session cookies over HTTPS
-    SESSION_COOKIE_SECURE = True
 
-    # Only send CSRF cookies over HTTPS
-    CSRF_COOKIE_SECURE = True
-
-    # Tell browsers to use HTTPS for one year
-    SECURE_HSTS_SECONDS = 31536000
-
-    # Apply HSTS to subdomains
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-
-    # Allow the site to be included in browser HSTS preload lists
-    SECURE_HSTS_PRELOAD = True
-
-    # Render terminates HTTPS before forwarding the request
+    # Tell Django that Render's forwarded HTTPS
+    # connection should be trusted.
     SECURE_PROXY_SSL_HEADER = (
         "HTTP_X_FORWARDED_PROTO",
         "https",
     )
 
 
+    # Send session cookies only over HTTPS.
+    SESSION_COOKIE_SECURE = True
+
+
+    # Send CSRF cookies only over HTTPS.
+    CSRF_COOKIE_SECURE = True
+
+
+    # Protect against clickjacking.
+    X_FRAME_OPTIONS = "DENY"
+
+
+    # HSTS
+    SECURE_HSTS_SECONDS = 31536000
+
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+    SECURE_HSTS_PRELOAD = True
+
+
+else:
+
+    # Development settings
+    SECURE_SSL_REDIRECT = False
+
+    SESSION_COOKIE_SECURE = False
+
+    CSRF_COOKIE_SECURE = False
+
+    SECURE_HSTS_SECONDS = 0
+
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+
+    SECURE_HSTS_PRELOAD = False
+
+
 # ============================================================
 # DEFAULT PRIMARY KEY
 # ============================================================
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = (
+    "django.db.models.BigAutoField"
+)
 
+
+# ============================================================
+# LOGGING
+# ============================================================
 
 LOGGING = {
     "version": 1,
+
     "disable_existing_loggers": False,
 
     "handlers": {
@@ -408,8 +465,16 @@ LOGGING = {
     },
 }
 
-# Website URL
+
+# ============================================================
+# WEBSITE URL
+# ============================================================
+
 if DEBUG:
+
     SITE_URL = "http://127.0.0.1:8000"
+
 else:
+
     SITE_URL = "https://www.msannewsblog.com"
+

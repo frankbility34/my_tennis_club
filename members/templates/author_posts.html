@@ -1,97 +1,320 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {{ author.username }}
+{{ author.username }} | MSAN News Blog
 {% endblock %}
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 
 
-    <!-- AUTHOR -->
+<!-- ========================================================= -->
+<!-- AUTHOR HEADER -->
+<!-- ========================================================= -->
 
-    <div class="text-center mb-5">
+<div class="text-center mb-5">
 
-        <h1>
-            {{ author.username }}
-        </h1>
+    <h1>
+        {{ author.username }}
+    </h1>
 
-        <p class="text-muted">
-            Articles written by {{ author.username }}.
-        </p>
+    <p class="text-muted">
+        Articles written by {{ author.username }}.
+    </p>
 
-    </div>
+</div>
 
 
-    <!-- POSTS -->
+<!-- ========================================================= -->
+<!-- AUTHOR POSTS -->
+<!-- ========================================================= -->
 
-    <div class="row">
+<div class="row">
 
-        {% for post in posts %}
+    {% for post in posts %}
 
         <div class="col-lg-4 col-md-6 mb-4">
 
-            <div class="card shadow-sm h-100">
+            <article class="card shadow-sm h-100">
+
+
+                <!-- ================================================= -->
+                <!-- FEATURED IMAGE -->
+                <!-- ================================================= -->
 
                 {% if post.featured_image %}
 
-                <img
-                    src="{{ post.featured_image.url }}"
-                    class="card-img-top"
-                    alt="{{ post.title }}"
-                >
+                    <a
+                        href="{% url 'post_detail' post.id %}"
+                    >
+
+                        <img
+                            src="{{ post.featured_image.image.url }}"
+                            class="card-img-top"
+                            alt="{{ post.title }}"
+                            loading="lazy"
+                        >
+
+                    </a>
 
                 {% endif %}
 
 
-                <div class="card-body">
+                <!-- ================================================= -->
+                <!-- POST CONTENT -->
+                <!-- ================================================= -->
 
-                    <h4>
-                        {{ post.title }}
+                <div class="card-body d-flex flex-column">
+
+
+                    <!-- CATEGORY -->
+
+                    {% if post.category %}
+
+                        <div class="mb-2">
+
+                            <a
+                                href="{% url 'category_posts' post.category.id %}"
+                                class="text-primary"
+                            >
+                                {{ post.category.category_name }}
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- TITLE -->
+
+                    <h4 class="card-title">
+
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="text-dark"
+                        >
+
+                            {{ post.title }}
+
+                        </a>
+
                     </h4>
 
-                    <p class="text-muted">
+
+                    <!-- DATE -->
+
+                    <p class="text-muted mb-2">
+
+                        <i class="far fa-clock"></i>
 
                         {{ post.created_at|date:"M d, Y" }}
 
                     </p>
 
-                    <p>
 
-                        {{ post.excerpt|default:post.content|truncatewords:25 }}
+                    <!-- EXCERPT -->
+
+                    <p class="card-text">
+
+                        {% if post.excerpt %}
+
+                            {{ post.excerpt|truncatewords:25 }}
+
+                        {% else %}
+
+                            {{ post.content|truncatewords:25 }}
+
+                        {% endif %}
 
                     </p>
 
-                    <a
-                        href="{% url 'post_detail' post.id %}"
-                        class="btn btn-primary"
-                    >
-                        Read More →
-                    </a>
+
+                    <!-- READ MORE -->
+
+                    <div class="mt-auto">
+
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="btn btn-primary"
+                        >
+                            Read More →
+                        </a>
+
+                    </div>
 
                 </div>
+
+            </article>
+
+        </div>
+
+
+    {% empty %}
+
+        <!-- ===================================================== -->
+        <!-- NO POSTS -->
+        <!-- ===================================================== -->
+
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                <h3>
+                    No published posts yet.
+                </h3>
+
+                <p class="text-muted">
+                    This author has not published any articles yet.
+                </p>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-primary"
+                >
+                    Back to Home
+                </a>
 
             </div>
 
         </div>
 
+    {% endfor %}
 
-        {% empty %}
+</div>
 
-        <div class="col-12">
 
-            <p>
-                This author has no published posts yet.
-            </p>
+<!-- ========================================================= -->
+<!-- PAGINATION -->
+<!-- ========================================================= -->
 
-        </div>
+{% if page_obj.has_other_pages %}
 
-        {% endfor %}
+    <div class="pagination-wrapper mt-4 mb-5">
+
+        <nav
+            aria-label="Author posts pagination"
+        >
+
+            <ul class="pagination justify-content-center">
+
+
+                <!-- ================================================= -->
+                <!-- PREVIOUS -->
+                <!-- ================================================= -->
+
+                {% if page_obj.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}"
+                            aria-label="Previous page"
+                        >
+
+                            &laquo; Previous
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            &laquo; Previous
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- CURRENT PAGE -->
+                <!-- ================================================= -->
+
+                <li class="page-item active">
+
+                    <span
+                        class="page-link"
+                        aria-current="page"
+                    >
+
+                        Page {{ page_obj.number }}
+                        of
+                        {{ page_obj.paginator.num_pages }}
+
+                    </span>
+
+                </li>
+
+
+                <!-- ================================================= -->
+                <!-- NEXT -->
+                <!-- ================================================= -->
+
+                {% if page_obj.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.next_page_number }}"
+                            aria-label="Next page"
+                        >
+
+                            Next &raquo;
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            Next &raquo;
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
 
     </div>
+
+{% endif %}
+
+
+<!-- ========================================================= -->
+<!-- BACK TO HOME -->
+<!-- ========================================================= -->
+
+<div class="text-center mt-4">
+
+    <a
+        href="{% url 'home' %}"
+        class="btn btn-outline-secondary"
+    >
+
+        ← Back to Home
+
+    </a>
+
+</div>
+
 
 </div>
 
 {% endblock %}
-

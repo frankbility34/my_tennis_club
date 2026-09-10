@@ -1,276 +1,447 @@
 {% extends "base.html" %}
 
 {% block title %}
-Search
+Search{% if query %} - {{ query }}{% endif %} | MSAN News Blog
 {% endblock %}
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 
 
+<!-- ========================================================= -->
 <!-- SEARCH HEADER -->
+<!-- ========================================================= -->
 
-<div class="mb-4">
+<div class="text-center mb-5">
 
     <h1>
-        Search
+        Search News
     </h1>
 
     <p class="text-muted">
-        Find articles, news and stories on our blog.
+        Find articles, stories, and news from MSAN News Blog.
     </p>
 
 </div>
 
 
+<!-- ========================================================= -->
 <!-- SEARCH FORM -->
+<!-- ========================================================= -->
 
-<form
-    method="GET"
-    action="{% url 'search' %}"
-    class="mb-5"
->
+<div class="row justify-content-center mb-5">
 
-    <div class="input-group">
+    <div class="col-lg-8">
 
-        <input
-            type="search"
-            name="q"
-            class="form-control"
-            placeholder="Search posts..."
-            value="{{ query }}"
+        <form
+            method="GET"
+            action="{% url 'search' %}"
+            class="input-group"
         >
 
-        <button
-            type="submit"
-            class="btn btn-primary"
-        >
-            Search
-        </button>
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                class="form-control"
+                placeholder="Search news..."
+                aria-label="Search news"
+            >
+
+            <div class="input-group-append">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+
+                    <i class="fas fa-search"></i>
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-</form>
+</div>
 
 
-
+<!-- ========================================================= -->
+<!-- SEARCH RESULTS HEADER -->
+<!-- ========================================================= -->
 
 {% if query %}
 
-    <h4 class="mb-4">
+    <div class="mb-4">
 
-        Search results for:
+        <h2>
 
-        <strong>
-            "{{ query }}"
-        </strong>
+            Search results for:
 
-    </h4>
+            <strong>
+                "{{ query }}"
+            </strong>
 
+        </h2>
 
-    {% if posts %}
+        {% if page_obj.paginator.count %}
 
-        <p class="text-muted">
-            {{ posts|length }} result{{ posts|length|pluralize }}
-            found.
-        </p>
+            <p class="text-muted">
 
+                {{ page_obj.paginator.count }}
 
-        
+                {% if page_obj.paginator.count == 1 %}
+                    result
+                {% else %}
+                    results
+                {% endif %}
 
-        <div class="row">
-
-            {% for post in posts %}
-
-                <div class="col-lg-6 mb-4">
-
-                    <div class="card shadow-sm h-100">
-
-                        <div class="card-body">
-
-                            <h4 class="card-title">
-                                {{ post.title }}
-                            </h4>
-
-
-                            <p class="text-muted">
-                                {{ post.content|truncatewords:30 }}
-                            </p>
-
-
-                            <p class="small text-muted">
-
-                                Published:
-
-                                {{ post.created_at|date:"M d, Y" }}
-
-                            </p>
-
-
-                            <a
-                                href="#"
-                                class="btn btn-outline-primary"
-                            >
-                                Read More
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-
-        
-
-        {% if page_obj.has_other_pages %}
-
-            <nav aria-label="Search results pages">
-
-                <ul class="pagination justify-content-center">
-
-
-                    
-
-                    {% if page_obj.has_previous %}
-
-                        <li class="page-item">
-
-                            <a
-                                class="page-link"
-                                href="?q={{ query }}&page={{ page_obj.previous_page_number }}"
-                            >
-                                Previous
-                            </a>
-
-                        </li>
-
-                    {% else %}
-
-                        <li class="page-item disabled">
-
-                            <span class="page-link">
-                                Previous
-                            </span>
-
-                        </li>
-
-                    {% endif %}
-
-
-                    
-
-                    {% for number in page_obj.paginator.page_range %}
-
-                        {% if page_obj.number == number %}
-
-                            <li class="page-item active">
-
-                                <span class="page-link">
-                                    {{ number }}
-                                </span>
-
-                            </li>
-
-                        {% else %}
-
-                            <li class="page-item">
-
-                                <a
-                                    class="page-link"
-                                    href="?q={{ query }}&page={{ number }}"
-                                >
-                                    {{ number }}
-                                </a>
-
-                            </li>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-
-                    
-
-                    {% if page_obj.has_next %}
-
-                        <li class="page-item">
-
-                            <a
-                                class="page-link"
-                                href="?q={{ query }}&page={{ page_obj.next_page_number }}"
-                            >
-                                Next
-                            </a>
-
-                        </li>
-
-                    {% else %}
-
-                        <li class="page-item disabled">
-
-                            <span class="page-link">
-                                Next
-                            </span>
-
-                        </li>
-
-                    {% endif %}
-
-                </ul>
-
-            </nav>
-
-        {% endif %}
-
-
-    {% else %}
-
-        
-
-        <div class="alert alert-warning">
-
-            <h5>
-                No posts found.
-            </h5>
-
-            <p class="mb-0">
-
-                We couldn't find any posts matching
-                "{{ query }}".
+                found.
 
             </p>
 
-        </div>
+        {% endif %}
 
-    {% endif %}
-
+    </div>
 
 {% else %}
 
-    
+    <div class="mb-4">
 
-    <div class="text-center mt-5">
-
-        <h4>
-            What are you looking for?
-        </h4>
-
-        <p class="text-muted">
-
-            Enter a keyword above to search the blog.
-
-        </p>
+        <h2>
+            Latest News
+        </h2>
 
     </div>
 
 {% endif %}
 
+
+<!-- ========================================================= -->
+<!-- SEARCH RESULTS -->
+<!-- ========================================================= -->
+
+<div class="row">
+
+    {% for post in posts %}
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <article class="card shadow-sm h-100">
+
+
+                <!-- ================================================= -->
+                <!-- IMAGE -->
+                <!-- ================================================= -->
+
+                {% if post.featured_image %}
+
+                    <a
+                        href="{% url 'post_detail' post.id %}"
+                    >
+
+                        <img
+                            src="{{ post.featured_image.image.url }}"
+                            class="card-img-top"
+                            alt="{{ post.title }}"
+                            loading="lazy"
+                        >
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- CONTENT -->
+                <!-- ================================================= -->
+
+                <div class="card-body d-flex flex-column">
+
+
+                    <!-- CATEGORY -->
+
+                    {% if post.category %}
+
+                        <div class="mb-2">
+
+                            <a
+                                href="{% url 'category_posts' post.category.id %}"
+                                class="text-primary"
+                            >
+
+                                {{ post.category.category_name }}
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- TITLE -->
+
+                    <h3 class="card-title">
+
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="text-dark"
+                        >
+
+                            {{ post.title }}
+
+                        </a>
+
+                    </h3>
+
+
+                    <!-- AUTHOR -->
+
+                    <p class="text-muted mb-2">
+
+                        By
+
+                        <a
+                            href="{% url 'author_posts' post.author.id %}"
+                        >
+
+                            {{ post.author.username }}
+
+                        </a>
+
+                    </p>
+
+
+                    <!-- DATE -->
+
+                    <p class="text-muted mb-2">
+
+                        <i class="far fa-clock"></i>
+
+                        {{ post.created_at|date:"M d, Y" }}
+
+                    </p>
+
+
+                    <!-- EXCERPT -->
+
+                    <p class="card-text">
+
+                        {% if post.excerpt %}
+
+                            {{ post.excerpt|truncatewords:25 }}
+
+                        {% else %}
+
+                            {{ post.content|truncatewords:25 }}
+
+                        {% endif %}
+
+                    </p>
+
+
+                    <!-- READ MORE -->
+
+                    <div class="mt-auto">
+
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="btn btn-primary"
+                        >
+
+                            Read More →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+
+    {% empty %}
+
+        <!-- ===================================================== -->
+        <!-- NO RESULTS -->
+        <!-- ===================================================== -->
+
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                {% if query %}
+
+                    <h3>
+                        No results found.
+                    </h3>
+
+                    <p class="text-muted">
+
+                        We couldn't find any published articles
+                        matching "{{ query }}".
+
+                    </p>
+
+                {% else %}
+
+                    <h3>
+                        No published posts yet.
+                    </h3>
+
+                    <p class="text-muted">
+
+                        Published articles will appear here.
+
+                    </p>
+
+                {% endif %}
+
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-primary"
+                >
+
+                    Back to Home
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PAGINATION -->
+<!-- ========================================================= -->
+
+{% if page_obj.has_other_pages %}
+
+    <div class="pagination-wrapper mt-4 mb-5">
+
+        <nav aria-label="Search results pagination">
+
+            <ul class="pagination justify-content-center">
+
+
+                <!-- PREVIOUS -->
+
+                {% if page_obj.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}"
+                        >
+
+                            &laquo; Previous
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            &laquo; Previous
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+
+                <!-- CURRENT PAGE -->
+
+                <li class="page-item active">
+
+                    <span
+                        class="page-link"
+                        aria-current="page"
+                    >
+
+                        Page {{ page_obj.number }}
+                        of
+                        {{ page_obj.paginator.num_pages }}
+
+                    </span>
+
+                </li>
+
+
+                <!-- NEXT -->
+
+                {% if page_obj.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}"
+                        >
+
+                            Next &raquo;
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            Next &raquo;
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
+
+    </div>
+
+{% endif %}
+
+
+<!-- ========================================================= -->
+<!-- BACK HOME -->
+<!-- ========================================================= -->
+
+<div class="text-center mt-4">
+
+    <a
+        href="{% url 'home' %}"
+        class="btn btn-outline-secondary"
+    >
+
+        ← Back to Home
+
+    </a>
+
+</div>
 
 </div>
 

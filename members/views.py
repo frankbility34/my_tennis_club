@@ -1285,6 +1285,7 @@ def search(request):
 
 
 
+
 def post_detail(request, post_id):
 
     post = get_object_or_404(
@@ -1307,9 +1308,21 @@ def post_detail(request, post_id):
         "-created_at"
     )
 
+    # Get all categories for the sidebar
+    categories = Category.objects.all().order_by(
+        "category_name"
+    )
+
+    # Get all tags for the sidebar
+    tags = Tag.objects.all().order_by(
+        "tg_name"
+    )
+
     context = {
         "post": post,
         "comments": comments,
+        "categories": categories,
+        "tags": tags,
     }
 
     return render(
@@ -1317,6 +1330,10 @@ def post_detail(request, post_id):
         "post_detail.html",
         context
     )
+
+
+
+
 
 
 

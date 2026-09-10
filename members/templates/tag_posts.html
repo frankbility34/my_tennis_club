@@ -1,214 +1,334 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}
-    #{{ tag.tg_name }} | News Blog
+#{{ tag.tg_name }} | MSAN News Blog
 {% endblock %}
-
 
 {% block content %}
 
 <div class="container mt-5 mb-5">
 
 
-    <!-- ================================================= -->
-    <!-- TAG HEADER -->
-    <!-- ================================================= -->
+<!-- ========================================================= -->
+<!-- TAG HEADER -->
+<!-- ========================================================= -->
 
-    <div class="mb-5">
+<div class="text-center mb-5">
 
+    <h1>
+        #{{ tag.tg_name }}
+    </h1>
 
-        <!-- TAG IMAGE -->
+    <p class="text-muted">
+        Latest articles tagged with
+        #{{ tag.tg_name }}.
+    </p>
 
-        {% if tag.image %}
-
-            <img
-                src="{{ tag.image.url }}"
-                alt="{{ tag.tg_name }}"
-                class="img-fluid rounded w-100 mb-4"
-                style="height: 350px; object-fit: cover;"
-            >
-
-        {% endif %}
+</div>
 
 
-        <!-- TAG NAME -->
+<!-- ========================================================= -->
+<!-- POSTS -->
+<!-- ========================================================= -->
 
-        <h1>
+<div class="row">
 
-            #{{ tag.tg_name }}
+    {% for post in posts %}
 
-        </h1>
+        <div class="col-lg-4 col-md-6 mb-4">
 
-
-        <p class="text-muted">
-
-            Articles tagged with
-            "{{ tag.tg_name }}".
-
-        </p>
+            <article class="card shadow-sm h-100">
 
 
-        <a
-            href="{% url 'home' %}"
-            class="btn btn-secondary"
-        >
+                <!-- ================================================= -->
+                <!-- FEATURED IMAGE -->
+                <!-- ================================================= -->
 
-            ← Back to Home
+                {% if post.featured_image %}
 
-        </a>
-
-    </div>
-
-
-    <!-- ================================================= -->
-    <!-- TAG POSTS -->
-    <!-- ================================================= -->
-
-    <div class="row">
-
-
-        {% for post in posts %}
-
-
-            <div class="col-lg-4 col-md-6 mb-4">
-
-
-                <article class="card shadow-sm h-100">
-
-
-                    <!-- ===================================== -->
-                    <!-- POST IMAGE -->
-                    <!-- ===================================== -->
-
-                    {% if post.featured_image %}
+                    <a
+                        href="{% url 'post_detail' post.id %}"
+                    >
 
                         <img
                             src="{{ post.featured_image.image.url }}"
                             class="card-img-top"
                             alt="{{ post.title }}"
-                            style="height: 220px; object-fit: cover;"
+                            loading="lazy"
                         >
 
-                    {% else %}
+                    </a>
 
-                        <div
-                            class="bg-light d-flex align-items-center justify-content-center"
-                            style="height: 220px;"
-                        >
+                {% endif %}
 
-                            <span class="text-muted">
-                                No image
-                            </span>
 
-                        </div>
+                <!-- ================================================= -->
+                <!-- POST CONTENT -->
+                <!-- ================================================= -->
+
+                <div class="card-body d-flex flex-column">
+
+
+                    <!-- CATEGORY -->
+
+                    {% if post.category %}
+
+                        <p class="mb-2">
+
+                            <a
+                                href="{% url 'category_posts' post.category.id %}"
+                                class="text-primary"
+                            >
+
+                                {{ post.category.category_name }}
+
+                            </a>
+
+                        </p>
 
                     {% endif %}
 
 
-                    <!-- ===================================== -->
-                    <!-- POST BODY -->
-                    <!-- ===================================== -->
+                    <!-- TITLE -->
 
-                    <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">
 
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="text-dark"
+                        >
 
-                        <!-- TITLE -->
+                            {{ post.title }}
 
-                        <h4 class="card-title">
+                        </a>
 
-                            <a
-                                href="{% url 'post_detail' post.id %}"
-                                class="text-dark text-decoration-none"
-                            >
-
-                                {{ post.title }}
-
-                            </a>
-
-                        </h4>
+                    </h4>
 
 
-                        <!-- AUTHOR -->
+                    <!-- AUTHOR -->
 
-                        <p class="text-muted mb-2">
+                    <p class="text-muted mb-2">
 
-                            By {{ post.author.username }}
+                        By
 
-                        </p>
+                        <a
+                            href="{% url 'author_posts' post.author.id %}"
+                        >
+
+                            {{ post.author.username }}
+
+                        </a>
+
+                    </p>
 
 
-                        <!-- DATE -->
+                    <!-- DATE -->
 
-                        <p class="text-muted small">
+                    <p class="text-muted mb-2">
 
-                            {{ post.created_at|date:"F d, Y" }}
+                        <i class="far fa-clock"></i>
 
-                        </p>
+                        {{ post.created_at|date:"M d, Y" }}
+
+                    </p>
 
 
-                        <!-- EXCERPT -->
+                    <!-- EXCERPT -->
+
+                    <p class="card-text">
 
                         {% if post.excerpt %}
 
-                            <p class="card-text">
-
-                                {{ post.excerpt|truncatewords:25 }}
-
-                            </p>
+                            {{ post.excerpt|truncatewords:25 }}
 
                         {% else %}
 
-                            <p class="card-text">
-
-                                {{ post.content|truncatewords:25 }}
-
-                            </p>
+                            {{ post.content|truncatewords:25 }}
 
                         {% endif %}
 
+                    </p>
 
-                        <!-- READ MORE -->
 
-                        <div class="mt-auto">
+                    <!-- READ MORE -->
 
-                            <a
-                                href="{% url 'post_detail' post.id %}"
-                                class="btn btn-primary"
-                            >
+                    <div class="mt-auto">
 
-                                Read More →
+                        <a
+                            href="{% url 'post_detail' post.id %}"
+                            class="btn btn-primary"
+                        >
 
-                            </a>
+                            Read More →
 
-                        </div>
+                        </a>
 
                     </div>
 
-                </article>
-
-            </div>
-
-
-        {% empty %}
-
-
-            <div class="col-12">
-
-                <div class="alert alert-info">
-
-                    No published posts with this tag yet.
-
                 </div>
 
+            </article>
+
+        </div>
+
+
+    {% empty %}
+
+        <!-- ===================================================== -->
+        <!-- NO POSTS -->
+        <!-- ===================================================== -->
+
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                <h3>
+                    No published posts have this tag yet.
+                </h3>
+
+                <p class="text-muted">
+                    Check back later for articles using this tag.
+                </p>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-primary"
+                >
+
+                    Back to Home
+
+                </a>
+
             </div>
 
+        </div>
 
-        {% endfor %}
+    {% endfor %}
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PAGINATION -->
+<!-- ========================================================= -->
+
+{% if page_obj.has_other_pages %}
+
+    <div class="pagination-wrapper mt-4 mb-5">
+
+        <nav aria-label="Tag posts pagination">
+
+            <ul class="pagination justify-content-center">
+
+
+                <!-- PREVIOUS -->
+
+                {% if page_obj.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}"
+                        >
+
+                            &laquo; Previous
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            &laquo; Previous
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+
+                <!-- CURRENT PAGE -->
+
+                <li class="page-item active">
+
+                    <span
+                        class="page-link"
+                        aria-current="page"
+                    >
+
+                        Page {{ page_obj.number }}
+                        of
+                        {{ page_obj.paginator.num_pages }}
+
+                    </span>
+
+                </li>
+
+
+                <!-- NEXT -->
+
+                {% if page_obj.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.next_page_number }}"
+                        >
+
+                            Next &raquo;
+
+                        </a>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link">
+
+                            Next &raquo;
+
+                        </span>
+
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
 
     </div>
+
+{% endif %}
+
+
+<!-- ========================================================= -->
+<!-- BACK HOME -->
+<!-- ========================================================= -->
+
+<div class="text-center mt-4">
+
+    <a
+        href="{% url 'home' %}"
+        class="btn btn-outline-secondary"
+    >
+
+        ← Back to Home
+
+    </a>
+
+</div>
+
 
 </div>
 
 {% endblock %}
-

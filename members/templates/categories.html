@@ -1,87 +1,153 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Categories | News Blog
+Categories | MSAN News Blog
 {% endblock %}
 
 {% block content %}
 
 <div class="container py-5">
 
-    <!-- ===================================================== -->
-    <!-- PAGE HEADING -->
-    <!-- ===================================================== -->
 
-    <div class="text-center mb-5">
+<!-- ===================================================== -->
+<!-- PAGE HEADING -->
+<!-- ===================================================== -->
 
-        <h1 class="fw-bold">
-            Categories
-        </h1>
+<div class="text-center mb-5">
 
-        <p class="text-muted">
-            Browse our blog posts by category.
-        </p>
+    <h1 class="fw-bold">
+        Categories
+    </h1>
 
-    </div>
+    <p class="text-muted">
+        Browse MSAN News Blog posts by category.
+    </p>
 
-
-    <!-- ===================================================== -->
-    <!-- CATEGORY LIST -->
-    <!-- ===================================================== -->
-
-    {% if categories %}
-
-        <div class="row">
-
-            {% for category in categories %}
-
-                <div class="col-md-4 mb-4">
-
-                    <div class="card h-100 shadow-sm">
-
-                        <div class="card-body text-center">
-
-                            <!-- CATEGORY NAME -->
-
-                            <h5 class="card-title fw-bold">
-                                {{ category.category_name }}
-                            </h5>
+</div>
 
 
-                            <!-- VIEW POSTS BUTTON -->
+<!-- ===================================================== -->
+<!-- CATEGORY LIST -->
+<!-- ===================================================== -->
 
-                            <a
-                                href="{% url 'category_posts' category.id %}"
-                                class="btn btn-outline-primary mt-3"
-                            >
-                                View Posts
-                            </a>
+{% if categories %}
 
-                        </div>
+    <div class="row">
+
+        {% for category in categories %}
+
+            <div class="col-md-4 mb-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <!-- CATEGORY NAME -->
+
+                        <h5 class="card-title fw-bold">
+                            {{ category.category_name }}
+                        </h5>
+
+
+                        <!-- VIEW POSTS BUTTON -->
+
+                        <a
+                            href="{% url 'category_posts' category.id %}"
+                            class="btn btn-outline-primary mt-3"
+                        >
+                            View Posts
+                        </a>
 
                     </div>
 
                 </div>
 
-            {% endfor %}
+            </div>
 
-        </div>
+        {% endfor %}
 
-    {% else %}
+    </div>
 
-        <!-- ================================================= -->
-        <!-- NO CATEGORIES -->
-        <!-- ================================================= -->
+{% else %}
 
-        <div class="alert alert-info text-center">
+    <!-- ================================================= -->
+    <!-- NO CATEGORIES -->
+    <!-- ================================================= -->
 
-            No categories have been created yet.
+    <div class="alert alert-info text-center">
 
-        </div>
+        No categories have been created yet.
 
-    {% endif %}
+    </div>
+
+{% endif %}
+
+
+<!-- ========================================================= -->
+<!-- CATEGORY PAGINATION -->
+<!-- ========================================================= -->
+
+{% if page_obj.has_other_pages %}
+
+    <div class="pagination-wrapper mt-4 mb-5">
+
+        <nav aria-label="Category pagination">
+
+            <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}"
+                        >
+                            &laquo; Previous
+                        </a>
+
+                    </li>
+
+                {% endif %}
+
+
+                <li class="page-item active">
+
+                    <span class="page-link">
+
+                        Page {{ page_obj.number }}
+                        of
+                        {{ page_obj.paginator.num_pages }}
+
+                    </span>
+
+                </li>
+
+
+                {% if page_obj.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ page_obj.next_page_number }}"
+                        >
+                            Next &raquo;
+                        </a>
+
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </nav>
+
+    </div>
+
+{% endif %}
+
 
 </div>
 
 {% endblock %}
-
