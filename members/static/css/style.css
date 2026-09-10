@@ -1110,3 +1110,560 @@ body {
     border-radius: 10px;
 }    
 
+
+
+
+/* ============================================================
+   RESPONSIVE LAYOUT / MOBILE OVERFLOW FIX
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   GLOBAL BOX SIZING
+   ------------------------------------------------------------ */
+
+html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVE IMAGES
+   ------------------------------------------------------------ */
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+
+/* ------------------------------------------------------------
+   PREVENT LONG TEXT FROM BREAKING THE PAGE
+   ------------------------------------------------------------ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+
+/* ------------------------------------------------------------
+   BOOTSTRAP CONTAINERS
+   ------------------------------------------------------------ */
+
+.container,
+.container-fluid {
+    width: 100%;
+}
+
+
+/* ------------------------------------------------------------
+   BOOTSTRAP ROWS
+   ------------------------------------------------------------ */
+
+.row {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+/* ------------------------------------------------------------
+   MEDIA / VIDEO / IFRAMES
+   ------------------------------------------------------------ */
+
+iframe,
+video,
+embed,
+object {
+    max-width: 100%;
+}
+
+
+/* ------------------------------------------------------------
+   FORMS
+   ------------------------------------------------------------ */
+
+input,
+textarea,
+select,
+button {
+    max-width: 100%;
+}
+
+
+/* ============================================================
+   MOBILE DEVICES
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    /* --------------------------------------------------------
+       PAGE WIDTH
+       -------------------------------------------------------- */
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+
+    /* --------------------------------------------------------
+       BOOTSTRAP CONTAINERS
+       -------------------------------------------------------- */
+
+    .container,
+    .container-fluid {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+
+    /* --------------------------------------------------------
+       ROWS
+       -------------------------------------------------------- */
+
+    .row {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+
+    /* --------------------------------------------------------
+       COLUMNS
+       -------------------------------------------------------- */
+
+    [class*="col-"] {
+        max-width: 100%;
+    }
+
+
+    /* --------------------------------------------------------
+       TOP HEADER
+       -------------------------------------------------------- */
+
+    .top-header {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .top-header .logo,
+    .top-header .search,
+    .top-header .social {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    /* --------------------------------------------------------
+       LOGO
+       -------------------------------------------------------- */
+
+    .top-header .logo img {
+        max-width: 100%;
+        height: auto;
+    }
+
+
+    /* --------------------------------------------------------
+       SEARCH
+       -------------------------------------------------------- */
+
+    .top-header .search {
+        position: relative;
+    }
+
+    .top-header .search input[type="text"] {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .top-header .search button {
+        max-width: 40px;
+    }
+
+
+    /* --------------------------------------------------------
+       NAVIGATION
+       -------------------------------------------------------- */
+
+    .header,
+    .header .navbar {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .header .navbar {
+        overflow-x: hidden;
+    }
+
+    .navbar-collapse {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .navbar-nav {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .header a.nav-link {
+        white-space: normal;
+    }
+
+
+    /* --------------------------------------------------------
+       TOP NEWS
+       -------------------------------------------------------- */
+
+    .top-news {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .top-news .tn-img {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .top-news .tn-img img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .top-news .tn-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .top-news .tn-content a.tn-title {
+        max-width: 100%;
+        font-size: 20px;
+        line-height: 1.3;
+    }
+
+    .top-news .tn-left .tn-content a.tn-title {
+        font-size: 25px;
+        line-height: 1.3;
+    }
+
+
+    /* --------------------------------------------------------
+       CATEGORY NEWS
+       -------------------------------------------------------- */
+
+    .cat-news {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .cat-news .cn-img {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .cat-news .cn-img img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .cat-news .cn-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .cat-news h2 {
+        font-size: 28px;
+        margin-left: 40px;
+    }
+
+
+    /* --------------------------------------------------------
+       MAIN NEWS
+       -------------------------------------------------------- */
+
+    .main-news {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .main-news .mn-img {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .main-news .mn-img img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .main-news .mn-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .main-news .mn-content a.mn-title {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+
+    .main-news h2 {
+        font-size: 28px;
+    }
+
+
+    /* --------------------------------------------------------
+       MAIN NEWS LIST
+       -------------------------------------------------------- */
+
+    .main-news .mn-list {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+
+    .main-news .mn-list .mn-img {
+        max-width: 100px;
+    }
+
+    .main-news .mn-list .mn-content {
+        max-width: calc(100% - 115px);
+    }
+
+
+    /* --------------------------------------------------------
+       SINGLE NEWS
+       -------------------------------------------------------- */
+
+    .single-news {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .single-news .sn-img,
+    .single-news .sn-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .single-news .sn-img img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .single-news .sn-content a.sn-title {
+        font-size: 28px;
+        line-height: 1.3;
+    }
+
+
+    /* --------------------------------------------------------
+       SIDEBAR
+       -------------------------------------------------------- */
+
+    .sidebar {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+
+    /* --------------------------------------------------------
+       CONTACT
+       -------------------------------------------------------- */
+
+    .contact {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .contact .map,
+    .contact .map iframe {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    /* --------------------------------------------------------
+       FORMS
+       -------------------------------------------------------- */
+
+    form {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .form-control,
+    .custom-select,
+    textarea,
+    input,
+    select {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .input-group {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    /* --------------------------------------------------------
+       BUTTONS
+       -------------------------------------------------------- */
+
+    .btn {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+
+    /* --------------------------------------------------------
+       FOOTER
+       -------------------------------------------------------- */
+
+    .footer {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .footer .footer-widget {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .footer .footer-widget .title {
+        white-space: normal;
+    }
+
+    .footer .footer-widget ul li a {
+        white-space: normal;
+    }
+
+    .footer .newsletter {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .footer .newsletter form {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    /* --------------------------------------------------------
+       FOOTER BOTTOM
+       -------------------------------------------------------- */
+
+    .footer-bottom {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+
+    /* --------------------------------------------------------
+       CATEGORY / CUSTOM CONTENT BOXES
+       -------------------------------------------------------- */
+
+    .categories-page,
+    .add-cate,
+    .existing-cate {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+
+    /* --------------------------------------------------------
+       PREVENT TABLES FROM BREAKING MOBILE LAYOUT
+       -------------------------------------------------------- */
+
+    table {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .table-responsive {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+
+
+/* ============================================================
+   VERY SMALL PHONES
+   ============================================================ */
+
+@media (max-width: 375px) {
+
+    .container,
+    .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .top-news .top-news .tn-left .tn-content a.tn-title {
+        font-size: 22px;
+    }
+
+    .main-news .mn-content a.mn-title {
+        font-size: 21px;
+    }
+
+    .single-news .sn-content a.sn-title {
+        font-size: 25px;
+    }
+
+    .cat-news h2,
+    .main-news h2 {
+        font-size: 25px;
+    }
+}
+
