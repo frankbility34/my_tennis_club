@@ -1026,15 +1026,46 @@ def media_management(request):
 
 
 
+
 @staff_member_required
 def upload_media(request):
 
     if request.method == "POST":
 
-        title = request.POST["title"]
+        title = request.POST.get(
+            "title",
+            ""
+        ).strip()
 
-        image = request.FILES.get("image")
+        image = request.FILES.get(
+            "image"
+        )
 
+        # Check that a title was provided
+        if not title:
+
+            messages.error(
+                request,
+                "Please enter an image title."
+            )
+
+            return redirect(
+                "upload_media"
+            )
+
+        # Check that an image was actually selected
+        if not image:
+
+            messages.error(
+                request,
+                "Please choose an image before uploading."
+            )
+
+            return redirect(
+                "upload_media"
+            )
+
+        # Create the Media record
         Media.objects.create(
             title=title,
             image=image,
@@ -1046,12 +1077,15 @@ def upload_media(request):
             "Image uploaded successfully."
         )
 
-        return redirect("media_management")
+        return redirect(
+            "media_management"
+        )
 
     return render(
         request,
         "upload_media.html"
     )
+
 
 @staff_member_required
 def delete_media(request, media_id):
