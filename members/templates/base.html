@@ -21,24 +21,93 @@
 </title>
 
 
+
 <!-- ========================================================= -->
 <!-- SEO META INFORMATION -->
 <!-- ========================================================= -->
 
 <meta
     name="description"
-    content="MSAN News Blog — latest news, stories, insights, and articles."
->
-
-<meta
-    name="keywords"
-    content="MSAN News Blog, news, Nigeria, articles, stories, latest news"
+    content="{% block meta_description %}MSAN News Blog — latest news, stories, insights, and articles from Nigeria and around the world.{% endblock %}"
 >
 
 <meta
     name="author"
     content="MSAN News Blog"
 >
+
+<!-- Tell search engines they may index and follow this page -->
+<meta
+    name="robots"
+    content="index, follow"
+>
+
+<!-- ========================================================= -->
+<!-- CANONICAL URL -->
+<!-- ========================================================= -->
+
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}"
+>
+
+
+<!-- ========================================================= -->
+<!-- OPEN GRAPH / FACEBOOK / WHATSAPP SHARING -->
+<!-- ========================================================= -->
+
+<meta
+    property="og:type"
+    content="{% block og_type %}website{% endblock %}"
+>
+
+<meta
+    property="og:title"
+    content="{% block og_title %}MSAN News Blog{% endblock %}"
+>
+
+<meta
+    property="og:description"
+    content="{% block og_description %}Latest news, stories, insights, and articles from MSAN News Blog.{% endblock %}"
+>
+
+<meta
+    property="og:url"
+    content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}"
+>
+
+<meta
+    property="og:site_name"
+    content="MSAN News Blog"
+>
+
+{% block og_image %}
+{% endblock %}
+
+
+<!-- ========================================================= -->
+<!-- TWITTER / X SHARING -->
+<!-- ========================================================= -->
+
+<meta
+    name="twitter:card"
+    content="summary_large_image"
+>
+
+<meta
+    name="twitter:title"
+    content="{% block twitter_title %}MSAN News Blog{% endblock %}"
+>
+
+<meta
+    name="twitter:description"
+    content="{% block twitter_description %}Latest news, stories, insights, and articles from MSAN News Blog.{% endblock %}"
+>
+
+{% block twitter_image %}
+{% endblock %}
+
+
 
 
 <!-- ========================================================= -->

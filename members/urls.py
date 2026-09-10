@@ -2,10 +2,12 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 
 
+
 from . import views
 
 urlpatterns = [
     path("", views.Myhome, name="home"),
+    path("robots.txt", views.robots_txt, name="robots_txt"),
     path("about/", views.about, name="about"),
     path("register/", views.register, name="register"),
     path("verify-email/<str:token>/", views.verify_email, name="verify_email"),

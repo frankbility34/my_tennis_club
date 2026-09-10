@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
@@ -194,6 +195,22 @@ def Myhome(request):
         "index.html",
         context
     )
+
+
+def robots_txt(request):
+
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://www.msannewsblog.com/sitemap.xml\n"
+    )
+
+    return HttpResponse(
+        content,
+        content_type="text/plain"
+    )
+
 
 
 

@@ -5,12 +5,97 @@
 {{ post.title }} | MSAN News Blog
 {% endblock %}
 
+<!-- ========================================================= -->
+
+<!-- SEO META DESCRIPTION -->
+
+<!-- ========================================================= -->
+
+{% block meta_description %}
+{% if post.excerpt %}
+{{ post.excerpt|truncatechars:160 }}
+{% else %}
+{{ post.content|striptags|truncatechars:160 }}
+{% endif %}
+{% endblock %}
+
+<!-- ========================================================= -->
+
+<!-- OPEN GRAPH -->
+
+<!-- ========================================================= -->
+
+{% block og_type %}
+article
+{% endblock %}
+
+{% block og_title %}
+{{ post.title }}
+{% endblock %}
+
+{% block og_description %}
+{% if post.excerpt %}
+{{ post.excerpt|truncatechars:160 }}
+{% else %}
+{{ post.content|striptags|truncatechars:160 }}
+{% endif %}
+{% endblock %}
+
+{% block og_image %}
+
+
+{% if post.featured_image and post.featured_image.image %}
+
+    <meta
+        property="og:image"
+        content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.image.url }}"
+    >
+
+{% endif %}
+```
+
+{% endblock %}
+
+<!-- ========================================================= -->
+
+<!-- TWITTER / X -->
+
+<!-- ========================================================= -->
+
+{% block twitter_title %}
+{{ post.title }}
+{% endblock %}
+
+{% block twitter_description %}
+{% if post.excerpt %}
+{{ post.excerpt|truncatechars:160 }}
+{% else %}
+{{ post.content|striptags|truncatechars:160 }}
+{% endif %}
+{% endblock %}
+
+{% block twitter_image %}
+
+```
+{% if post.featured_image and post.featured_image.image %}
+
+    <meta
+        name="twitter:image"
+        content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.image.url }}"
+    >
+
+{% endif %}
+```
+
+{% endblock %}
+
 {% block content %}
 
 <div class="container mt-5 mb-5">
 
-
+```
 <div class="row">
+
 
     <!-- ===================================================== -->
     <!-- MAIN ARTICLE -->
@@ -18,7 +103,12 @@
 
     <div class="col-lg-8">
 
-        <article class="post-detail">
+        <article
+            class="post-detail"
+            itemscope
+            itemtype="https://schema.org/NewsArticle"
+        >
+
 
             <!-- ================================================= -->
             <!-- CATEGORY -->
@@ -44,7 +134,10 @@
             <!-- POST TITLE -->
             <!-- ================================================= -->
 
-            <h1 class="mb-3">
+            <h1
+                class="mb-3"
+                itemprop="headline"
+            >
                 {{ post.title }}
             </h1>
 
@@ -53,25 +146,36 @@
             <!-- AUTHOR AND DATE -->
             <!-- ================================================= -->
 
-            <div class="text-muted mb-4">
+            <div
+                class="text-muted mb-4"
+                itemprop="author"
+                itemscope
+                itemtype="https://schema.org/Person"
+            >
 
                 <span>
                     By
+
                     <a
                         href="{% url 'author_posts' post.author.id %}"
                         class="text-decoration-none"
+                        itemprop="name"
                     >
                         {{ post.author.username }}
                     </a>
+
                 </span>
 
                 <span class="mx-2">
                     ·
                 </span>
 
-                <span>
+                <time
+                    datetime="{{ post.created_at|date:'c' }}"
+                    itemprop="datePublished"
+                >
                     {{ post.created_at|date:"F d, Y" }}
-                </span>
+                </time>
 
             </div>
 
@@ -89,14 +193,10 @@
                         alt="{{ post.title }}"
                         class="img-fluid rounded w-100"
                         style="max-height: 600px; object-fit: cover;"
+                        loading="eager"
+                        itemprop="image"
                     >
 
-                </div>
-
-            {% else %}
-
-                <div class="alert alert-secondary">
-                    No featured image has been selected for this post.
                 </div>
 
             {% endif %}
@@ -108,7 +208,10 @@
 
             {% if post.excerpt %}
 
-                <div class="lead mb-4">
+                <div
+                    class="lead mb-4"
+                    itemprop="description"
+                >
                     {{ post.excerpt }}
                 </div>
 
@@ -119,7 +222,10 @@
             <!-- ARTICLE CONTENT -->
             <!-- ================================================= -->
 
-            <div class="post-content mb-5">
+            <div
+                class="post-content mb-5"
+                itemprop="articleBody"
+            >
 
                 {{ post.content|linebreaks }}
 
@@ -171,8 +277,6 @@
                 </h3>
 
 
-                <!-- APPROVED COMMENTS -->
-
                 {% for comment in comments %}
 
                     <div class="card mb-3">
@@ -184,11 +288,15 @@
                             </h6>
 
                             <small class="text-muted">
+
                                 {{ comment.created_at|date:"F d, Y" }}
+
                             </small>
 
                             <p class="mt-3 mb-0">
+
                                 {{ comment.content }}
+
                             </p>
 
                         </div>
@@ -204,7 +312,9 @@
                 {% endfor %}
 
 
+                <!-- ================================================= -->
                 <!-- ADD COMMENT -->
+                <!-- ================================================= -->
 
                 {% if user.is_authenticated %}
 
@@ -253,7 +363,9 @@
                             </form>
 
                             <small class="text-muted d-block mt-2">
+
                                 Your comment will be reviewed before it appears publicly.
+
                             </small>
 
                         </div>
@@ -265,7 +377,9 @@
                     <div class="alert alert-info mt-4">
 
                         <p class="mb-2">
+
                             You must be logged in to leave a comment.
+
                         </p>
 
                         <a
@@ -283,17 +397,17 @@
 
         </article>
 
-
-        <!-- ===================================================== -->
-        <!-- SIDEBAR -->
-        <!-- ===================================================== -->
-
     </div>
 
+
+    <!-- ===================================================== -->
+    <!-- SIDEBAR -->
+    <!-- ===================================================== -->
 
     <div class="col-lg-4">
 
         <aside class="sidebar">
+
 
             <!-- ================================================= -->
             <!-- CATEGORIES -->
