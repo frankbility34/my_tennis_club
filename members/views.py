@@ -378,7 +378,7 @@ def edit_tag(request, tag_id):
 
     return render(
         request,
-        "/edit_tag.html",
+        "edit_tag.html",
         context
     )
 
@@ -989,6 +989,7 @@ def delete_comment(request, comment_id):
     return redirect("comments")    
 
 
+
 @staff_member_required
 def media_management(request):
 
@@ -997,7 +998,12 @@ def media_management(request):
         ""
     )
 
-    media = Media.objects.all()
+    # Only include Media records that actually have an image file.
+    media = Media.objects.exclude(
+        image=""
+    ).exclude(
+        image__isnull=True
+    )
 
     if search:
 
@@ -1017,6 +1023,8 @@ def media_management(request):
             "search": search
         }
     )
+
+
 
 @staff_member_required
 def upload_media(request):
@@ -1154,29 +1162,74 @@ def dashboard(request):
 
 
 
+
+# =========================================================
+# SEARCH
+# =========================================================
+
 def search(request):
 
-    query = request.GET.get("q", "")
+    query = request.GET.get(
+        "q",
+        ""
+    ).strip()
 
-    posts = Post.objects.filter(
-        status="published"
+    # =========================================================
+    # GET PUBLISHED POSTS
+    # =========================================================
+
+    posts = (
+        Post.objects
+        .filter(
+            status="published"
+        )
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related(
+            "tags"
+        )
+        .order_by(
+            "-created_at"
+        )
     )
+
+    # =========================================================
+    # SEARCH
+    # =========================================================
 
     if query:
 
         posts = posts.filter(
-            Q(title__icontains=query) |
-            Q(content__icontains=query)
+            Q(title__icontains=query)
+            | Q(content__icontains=query)
+            | Q(excerpt__icontains=query)
+            | Q(category__category_name__icontains=query)
+            | Q(tags__tg_name__icontains=query)
         ).distinct()
 
+    # =========================================================
+    # PAGINATION
+    # =========================================================
 
+    paginator = Paginator(
+        posts,
+        6
+    )
 
-    paginator = Paginator(posts, 5)
+    page_number = request.GET.get(
+        "page"
+    )
 
-    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(
+        page_number
+    )
 
-    page_obj = paginator.get_page(page_number)
-
+    # =========================================================
+    # CONTEXT
+    # =========================================================
 
     context = {
         "query": query,
@@ -1184,12 +1237,17 @@ def search(request):
         "page_obj": page_obj,
     }
 
+    # =========================================================
+    # RENDER SEARCH PAGE
+    # =========================================================
 
     return render(
         request,
         "search.html",
         context
     )
+
+
 
 
 
@@ -1231,29 +1289,75 @@ def post_detail(request, post_id):
 
 
 
+
+# =========================================================
+# CATEGORY POSTS
+# =========================================================
+
 def category_posts(request, category_id):
 
-    # Find the category.
-    # If the category does not exist, Django shows a 404 page.
+    # =========================================================
+    # GET CATEGORY
+    # =========================================================
+
     category = get_object_or_404(
         Category,
         id=category_id
     )
 
-    # Find all published posts belonging to this category.
-    # Newest posts appear first.
-    posts = Post.objects.filter(
-        category=category,
-        status="published"
-    ).order_by(
-        "-created_at"
+    # =========================================================
+    # GET PUBLISHED POSTS FOR THIS CATEGORY
+    # =========================================================
+
+    posts = (
+        Post.objects
+        .filter(
+            category=category,
+            status="published"
+        )
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related(
+            "tags"
+        )
+        .order_by(
+            "-created_at"
+        )
     )
 
-    # Send the category and its posts to the template.
+    # =========================================================
+    # PAGINATION
+    # =========================================================
+
+    paginator = Paginator(
+        posts,
+        6
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
+
+    # =========================================================
+    # CONTEXT
+    # =========================================================
+
     context = {
         "category": category,
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
     }
+
+    # =========================================================
+    # RENDER CATEGORY PAGE
+    # =========================================================
 
     return render(
         request,
@@ -1271,16 +1375,42 @@ def tag_posts(request, slug):
         slug=slug
     )
 
-    posts = Post.objects.filter(
-        tags=tag,
-        status="published"
-    ).order_by(
-        "-created_at"
+    posts = (
+        Post.objects
+        .filter(
+            tags=tag,
+            status="published"
+        )
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related(
+            "tags"
+        )
+        .order_by(
+            "-created_at"
+        )
+    )
+
+    paginator = Paginator(
+        posts,
+        6
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
     )
 
     context = {
         "tag": tag,
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
     }
 
     return render(
@@ -1291,22 +1421,48 @@ def tag_posts(request, slug):
 
 
 
-def author_posts(request, user_id):
 
-    author = User.objects.get(
+
+def author_posts(request, user_id):
+    author = get_object_or_404(
+        User,
         id=user_id
     )
 
-    posts = Post.objects.filter(
-        author=author,
-        status="published"
-    ).order_by(
-        "-created_at"
+    posts = (
+        Post.objects
+        .filter(
+            author=author,
+            status="published"
+        )
+        .select_related(
+            "author",
+            "category",
+            "featured_image"
+        )
+        .prefetch_related(
+            "tags"
+        )
+        .order_by(
+            "-created_at"
+        )
+    )
+
+    paginator = Paginator(
+        posts,
+        6
+    )
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(
+        page_number
     )
 
     context = {
         "author": author,
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
     }
 
     return render(
@@ -1314,6 +1470,13 @@ def author_posts(request, user_id):
         "author_posts.html",
         context
     )
+
+
+
+
+
+
+
 
 
 
@@ -1944,16 +2107,46 @@ def edit_profile(request):
     )
 
 
+def about(request):
+    return render(
+        request,
+        "about.html"
+    )
+
+
+
+
 
 def contact(request):
 
     if request.method == "POST":
 
-        name = request.POST.get("name", "").strip()
-        email = request.POST.get("email", "").strip()
-        message = request.POST.get("message", "").strip()
+        # =====================================================
+        # GET FORM DATA
+        # =====================================================
+
+        name = request.POST.get(
+            "name",
+            ""
+        ).strip()
+
+        email = request.POST.get(
+            "email",
+            ""
+        ).strip()
+
+        message = request.POST.get(
+            "message",
+            ""
+        ).strip()
+
+
+        # =====================================================
+        # VALIDATE FORM
+        # =====================================================
 
         if not name or not email or not message:
+
             messages.error(
                 request,
                 "Please complete all fields before sending your message."
@@ -1964,24 +2157,123 @@ def contact(request):
                 "contact.html"
             )
 
+
+        # =====================================================
+        # CHECK RESEND API KEY
+        # =====================================================
+
+        api_key = settings.RESEND_API_KEY
+
+        if not api_key:
+
+            print(
+                "CONTACT EMAIL ERROR: RESEND_API_KEY is not configured."
+            )
+
+            messages.error(
+                request,
+                "Sorry, your message could not be sent. Please try again later."
+            )
+
+            return redirect("contact")
+
+
+        # =====================================================
+        # CONFIGURE RESEND
+        # =====================================================
+
+        resend.api_key = api_key
+
+
+        # =====================================================
+        # SEND CONTACT EMAIL
+        # =====================================================
+
         try:
 
-            send_mail(
-                subject=f"New Contact Message from {name}",
+            response = resend.Emails.send(
+                {
+                    "from": settings.DEFAULT_FROM_EMAIL,
 
-                message=(
-                    f"Name: {name}\n"
-                    f"Email: {email}\n\n"
-                    f"Message:\n"
-                    f"{message}"
-                ),
+                    "to": [
+                        settings.ADMIN_EMAIL
+                    ],
 
-                from_email="info@msannewsblog.com",
+                    "reply_to": email,
 
-                recipient_list=["info@msannewsblog.com"],
+                    "subject": (
+                        f"New Contact Message from {name}"
+                    ),
 
-                fail_silently=False,
+                    "html": f"""
+                        <!DOCTYPE html>
+
+                        <html>
+
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>New Contact Message</title>
+                        </head>
+
+                        <body>
+
+                            <h2>
+                                New Contact Message
+                            </h2>
+
+                            <p>
+                                Someone has submitted a message
+                                through the MSAN News Blog Contact Us form.
+                            </p>
+
+                            <hr>
+
+                            <p>
+                                <strong>Name:</strong>
+                                {name}
+                            </p>
+
+                            <p>
+                                <strong>Email:</strong>
+                                {email}
+                            </p>
+
+                            <hr>
+
+                            <p>
+                                <strong>Message:</strong>
+                            </p>
+
+                            <p>
+                                {message}
+                            </p>
+
+                            <hr>
+
+                            <p>
+                                MSAN News Blog
+                            </p>
+
+                        </body>
+
+                        </html>
+                    """
+                }
             )
+
+
+            # =================================================
+            # EMAIL SENT SUCCESSFULLY
+            # =================================================
+
+            print(
+                "CONTACT EMAIL SENT SUCCESSFULLY:"
+            )
+
+            print(
+                response
+            )
+
 
             messages.success(
                 request,
@@ -1989,9 +2281,29 @@ def contact(request):
                 "We will get back to you soon."
             )
 
+
+        # =====================================================
+        # EMAIL ERROR
+        # =====================================================
+
         except Exception as e:
 
-            print("CONTACT EMAIL ERROR:", repr(e))
+            print(
+                "======================================"
+            )
+
+            print(
+                "CONTACT EMAIL ERROR:"
+            )
+
+            print(
+                repr(e)
+            )
+
+            print(
+                "======================================"
+            )
+
 
             messages.error(
                 request,
@@ -1999,12 +2311,22 @@ def contact(request):
                 "Please try again later."
             )
 
-        return redirect("contact")
+
+        return redirect(
+            "contact"
+        )
+
+
+    # =========================================================
+    # GET REQUEST
+    # =========================================================
 
     return render(
         request,
         "contact.html"
-    )    
+    )
+
+
     
 
 
