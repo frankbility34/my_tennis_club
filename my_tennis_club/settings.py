@@ -3,6 +3,7 @@ Django settings for my_tennis_club project.
 """
 
 import os
+import resend
 from pathlib import Path
 
 import cloudinary
@@ -304,29 +305,50 @@ cloudinary.config(
 
 
 
+
 # ============================================================
 # EMAIL CONFIGURATION — RESEND API
 # ============================================================
 
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+RESEND_API_KEY = os.environ.get(
+    "RESEND_API_KEY",
+    ""
+)
+
+
+resend.api_key = RESEND_API_KEY
+
+
+print(
+    "RESEND API KEY FOUND:",
+    bool(RESEND_API_KEY)
+)
+
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
     "info@msannewsblog.com"
 )
 
+
 ADMIN_EMAIL = os.environ.get(
     "ADMIN_EMAIL",
     "info@msannewsblog.com"
 )
 
+
 # Production safety check
+
 if os.environ.get("RENDER"):
 
     if not RESEND_API_KEY:
+
         raise RuntimeError(
             "RESEND_API_KEY environment variable is not set."
         )
+
+
+
 
 
 # ============================================================

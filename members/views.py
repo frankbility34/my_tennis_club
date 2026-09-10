@@ -16,6 +16,16 @@ from django.contrib.auth.decorators import login_required
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+
+
 
 
 
@@ -1401,7 +1411,7 @@ def register(request):
 
         # Configure Resend
 
-        resend.api_key = os.environ.get("RESEND_API_KEY")
+        resend.api_key = settings.RESEND_API_KEY
 
 
         # Send verification email
@@ -1606,6 +1616,277 @@ def user_login(request):
         request,
         "login.html"
     )
+
+
+
+
+
+def password_reset_request(request):
+
+    if request.method == "POST":
+
+        form = PasswordResetForm(request.POST)
+
+        if form.is_valid():
+
+            email = form.cleaned_data["email"].strip()
+
+            print(
+                "PASSWORD RESET REQUEST FOR:",
+                email
+            )
+
+            # =====================================================
+            # GET RESEND API KEY
+            # =====================================================
+
+            api_key = settings.RESEND_API_KEY
+
+            print(
+                "RESEND API KEY FOUND:",
+                bool(api_key)
+            )
+
+            if not api_key:
+
+                print(
+                    "ERROR: RESEND_API_KEY is not configured."
+                )
+
+                messages.error(
+                    request,
+                    "We could not send the password reset email. Please try again later."
+                )
+
+                return redirect(
+                    "password_reset"
+                )
+
+            resend.api_key = api_key
+
+            # =====================================================
+            # FIND USER
+            # =====================================================
+
+            users = User.objects.filter(
+                email__iexact=email
+            )
+
+            if not users.exists():
+
+                print(
+                    "NO USER FOUND FOR:",
+                    email
+                )
+
+                # For security, do not reveal whether an
+                # email address exists in the database.
+
+                messages.success(
+                    request,
+                    "If an account with that email exists, password reset instructions have been sent."
+                )
+
+                return redirect(
+                    "password_reset_done"
+                )
+
+            # =====================================================
+            # PROCESS USER
+            # =====================================================
+
+            email_sent = False
+
+            for user in users:
+
+                # =================================================
+                # CREATE SECURE DJANGO PASSWORD RESET TOKEN
+                # =================================================
+
+                uid = urlsafe_base64_encode(
+                    force_bytes(user.pk)
+                )
+
+                token = default_token_generator.make_token(
+                    user
+                )
+
+                # =================================================
+                # CREATE RESET URL
+                # =================================================
+
+                reset_path = reverse(
+                    "password_reset_confirm",
+                    kwargs={
+                        "uidb64": uid,
+                        "token": token,
+                    }
+                )
+
+                reset_url = (
+                    f"{settings.SITE_URL}{reset_path}"
+                )
+
+                print(
+                    "PASSWORD RESET URL:",
+                    reset_url
+                )
+
+                # =================================================
+                # EMAIL CONTENT
+                # =================================================
+
+                subject = (
+                    "Password Reset Request - News Blog"
+                )
+
+                html_message = f"""
+                <!DOCTYPE html>
+
+                <html>
+
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Password Reset</title>
+                </head>
+
+                <body>
+
+                    <h2>Password Reset Request</h2>
+
+                    <p>
+                        Hello {user.first_name},
+                    </p>
+
+                    <p>
+                        We received a request to reset the
+                        password for your News Blog account.
+                    </p>
+
+                    <p>
+                        Click the button below to choose
+                        a new password:
+                    </p>
+
+                    <p>
+
+                        <a
+                            href="{reset_url}"
+                            style="
+                                display:inline-block;
+                                padding:12px 20px;
+                                background:#007bff;
+                                color:#ffffff;
+                                text-decoration:none;
+                                border-radius:5px;
+                            "
+                        >
+                            Reset My Password
+                        </a>
+
+                    </p>
+
+                    <p>
+                        If the button does not work, copy
+                        and paste this link into your browser:
+                    </p>
+
+                    <p>
+                        <a href="{reset_url}">
+                            {reset_url}
+                        </a>
+                    </p>
+
+                    <p>
+                        This password reset link is temporary
+                        and can only be used once.
+                    </p>
+
+                    <p>
+                        If you did not request a password
+                        reset, you can safely ignore this email.
+                    </p>
+
+                    <p>
+                        Thank you,<br>
+                        News Blog Team
+                    </p>
+
+                </body>
+
+                </html>
+                """
+
+                # =================================================
+                # SEND THROUGH RESEND
+                # =================================================
+
+                try:
+
+                    response = resend.Emails.send(
+                        {
+                            "from": "info@msannewsblog.com",
+                            "to": [user.email],
+                            "subject": subject,
+                            "html": html_message,
+                        }
+                    )
+
+                    print(
+                        "RESEND PASSWORD RESET RESPONSE:",
+                        response
+                    )
+
+                    print(
+                        "PASSWORD RESET EMAIL SENT TO:",
+                        user.email
+                    )
+
+                    email_sent = True
+
+                except Exception as e:
+
+                    print(
+                        "RESEND PASSWORD RESET ERROR:",
+                        repr(e)
+                    )
+
+            # =====================================================
+            # RESULT
+            # =====================================================
+
+            if email_sent:
+
+                messages.success(
+                    request,
+                    "If an account with that email exists, password reset instructions have been sent."
+                )
+
+            else:
+
+                messages.error(
+                    request,
+                    "We could not send the password reset email. Please try again later."
+                )
+
+            return redirect(
+                "password_reset_done"
+            )
+
+    else:
+
+        form = PasswordResetForm()
+
+    return render(
+        request,
+        "registration/password_reset_form.html",
+        {
+            "form": form,
+        }
+    )
+
+
+
 
 
 def user_logout(request):
