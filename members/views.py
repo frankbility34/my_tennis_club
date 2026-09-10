@@ -13,6 +13,7 @@ from django.db import connection
 from django.db.models import Count
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.core.paginator import Paginator
 from django.db.models import Q
 
@@ -1305,6 +1306,7 @@ def author_posts(request, user_id):
     )
 
 
+
 def register(request):
 
     if request.method == "POST":
@@ -1368,9 +1370,9 @@ def register(request):
             return redirect("register")
 
 
-        # Create user
+        # Create inactive user
 
-        User.objects.create_user(
+        user = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username,
@@ -1378,10 +1380,75 @@ def register(request):
             password=password
         )
 
+        user.is_active = False
+        user.save()
+
+
+        # Create secure verification token
+
+        signer = TimestampSigner()
+
+        token = signer.sign(user.pk)
+
+
+        # Build verification URL
+
+
+        verification_url = (
+            f"{settings.SITE_URL}/verify-email/{token}/"
+        )
+
+
+        # Configure Resend
+
+        resend.api_key = os.environ.get("RESEND_API_KEY")
+
+
+        # Send verification email
+
+        resend.Emails.send({
+            "from": "info@msannewsblog.com",
+            "to": [user.email],
+            "subject": "Verify Your My Blog Account",
+            "html": f"""
+                <h2>Welcome to My Blog, {user.first_name}!</h2>
+
+                <p>
+                    Thank you for creating an account with us.
+                </p>
+
+                <p>
+                    Please verify your email address by clicking
+                    the button below:
+                </p>
+
+                <p>
+                    <a
+                        href="{verification_url}"
+                        style="
+                            display:inline-block;
+                            padding:12px 20px;
+                            background:#007bff;
+                            color:white;
+                            text-decoration:none;
+                            border-radius:5px;
+                        "
+                    >
+                        Verify My Email
+                    </a>
+                </p>
+
+                <p>
+                    If you did not create this account, you can
+                    safely ignore this email.
+                </p>
+            """
+        })
+
 
         messages.success(
             request,
-            "Account created successfully. You can now log in."
+            "Your account was created. Please check your email and click the verification link before logging in."
         )
 
         return redirect("login")
@@ -1391,6 +1458,80 @@ def register(request):
         request,
         "register.html"
     )
+
+
+
+def verify_email(request, token):
+
+    signer = TimestampSigner()
+
+    try:
+
+        user_id = signer.unsign(
+            token,
+            max_age=60 * 60 * 24
+        )
+
+    except SignatureExpired:
+
+        messages.error(
+            request,
+            "This verification link has expired. Please register again."
+        )
+
+        return redirect("register")
+
+    except BadSignature:
+
+        messages.error(
+            request,
+            "This verification link is invalid."
+        )
+
+        return redirect("register")
+
+
+    try:
+
+        user = User.objects.get(
+            pk=user_id
+        )
+
+    except User.DoesNotExist:
+
+        messages.error(
+            request,
+            "The user account could not be found."
+        )
+
+        return redirect("register")
+
+
+    if user.is_active:
+
+        messages.info(
+            request,
+            "Your email address has already been verified."
+        )
+
+        return redirect("login")
+
+
+    user.is_active = True
+    user.save()
+
+
+    messages.success(
+        request,
+        "Your email has been verified successfully. You can now log in."
+    )
+
+    return redirect("login")
+
+
+
+
+
 
 
 def user_login(request):
@@ -1430,6 +1571,29 @@ def user_login(request):
             return redirect("home")
 
 
+        # Check whether the username belongs to an
+        # inactive account
+
+        try:
+
+            existing_user = User.objects.get(
+                username__iexact=username
+            )
+
+            if not existing_user.is_active:
+
+                messages.error(
+                    request,
+                    "Please verify your email address before logging in."
+                )
+
+                return redirect("login")
+
+        except User.DoesNotExist:
+
+            pass
+
+
         messages.error(
             request,
             "Invalid username or password."
@@ -1442,6 +1606,7 @@ def user_login(request):
         request,
         "login.html"
     )
+
 
 def user_logout(request):
 
