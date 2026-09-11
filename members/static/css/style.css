@@ -1,16 +1,42 @@
 /**********************************/
-/********** General CSS ***********/
+/********** GENERAL CSS ***********/
 /**********************************/
+
+html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
 body {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
     color: #353535;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
     font-weight: 400;
     background: #ffffff;
+    overflow-x: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
 a {
     color: #E47A2E;
-    transition: 0.5s;
+    transition: 0.3s ease;
 }
 
 a:hover,
@@ -25,6 +51,7 @@ p {
     color: #353535;
     padding: 0;
     margin: 0 0 15px 0;
+    line-height: 1.7;
 }
 
 h1,
@@ -36,52 +63,117 @@ h6 {
     color: #353535;
     margin: 0 0 15px 0;
     padding: 0;
+    line-height: 1.3;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.container,
+.container-fluid {
+    width: 100%;
+}
+
+
+/**********************************/
+/********** PAGE WRAPPER **********/
+/**********************************/
+
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/**********************************/
+/******** BACK TO TOP CSS *********/
+/**********************************/
 
 .back-to-top {
     position: fixed;
     display: none;
-    background: #353535;
-    color: #ffffff;
-    width: 44px;
-    height: 44px;
-    text-align: center;
-    line-height: 1;
-    font-size: 16px;
     right: 15px;
     bottom: 15px;
-    transition: background 0.5s;
-    z-index: 11;
+    z-index: 999;
+
+    width: 44px;
+    height: 44px;
+
+    color: #ffffff;
+    background: #353535;
+
+    text-align: center;
+    line-height: 44px;
+    font-size: 16px;
+
+    transition: 0.3s ease;
 }
 
 .back-to-top:hover {
+    color: #ffffff;
     background: #E47A2E;
 }
 
 .back-to-top i {
-    padding-top: 12px;
     color: #ffffff;
 }
 
 
 /**********************************/
-/********* Form Input CSS *********/
+/********* FORM INPUT CSS *********/
 /**********************************/
+
 .form-control,
 .custom-select {
     width: 100%;
-    height: 35px;
+    height: 40px;
+
     padding: 0 15px;
+
     color: #666666;
+    background: #ffffff;
+
     border: 1px solid #353535;
     border-radius: 0;
-    margin-bottom: 15px
+
+    margin-bottom: 15px;
+
+    box-shadow: none;
 }
 
 .form-control:focus,
 .custom-select:focus {
-    box-shadow: none;
+    color: #353535;
+    background: #ffffff;
     border-color: #E47A2E;
+    box-shadow: none;
+}
+
+textarea.form-control {
+    min-height: 120px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .custom-radio,
@@ -95,17 +187,23 @@ h6 {
     border-radius: 0;
 }
 
-.custom-radio .custom-control-input:checked~.custom-control-label::before,
-.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
     color: #ffffff;
     background: #E47A2E;
+    border-color: #E47A2E;
+}
+
+button.btn,
+a.btn {
+    border-radius: 0;
+    transition: 0.3s ease;
 }
 
 button.btn {
     color: #353535;
     background: #ffffff;
     border: 1px solid #353535;
-    border-radius: 0;
 }
 
 button.btn:hover {
@@ -114,11 +212,20 @@ button.btn:hover {
     border-color: #E47A2E;
 }
 
+input,
+textarea,
+select,
+button {
+    max-width: 100%;
+}
+
 
 /**********************************/
-/********* Top Header CSS *********/
+/********* TOP HEADER CSS *********/
 /**********************************/
+
 .top-header {
+    width: 100%;
     padding: 15px 0;
     background: #ffffff;
 }
@@ -128,173 +235,201 @@ button.btn:hover {
     overflow: hidden;
 }
 
+.top-header .logo a {
+    display: inline-block;
+}
+
 .top-header .logo a img {
     max-width: 100%;
     max-height: 60px;
 }
 
 .top-header .search {
+    position: relative;
     width: 100%;
 }
 
-.top-header .search input[type=text] {
+.top-header .search form {
+    position: relative;
+    width: 100%;
+}
+
+.top-header .search input[type="text"] {
     width: 100%;
     height: 40px;
-    padding: 0 15px;
+
+    padding: 0 50px 0 15px;
+
     color: #666666;
+    background: #ffffff;
+
     border: 1px solid #353535;
+    border-radius: 0;
 }
 
-.top-header .search input[type=text]:focus {
+.top-header .search input[type="text"]:focus {
+    outline: none;
     border-color: #E47A2E;
 }
 
 .top-header .search button {
     position: absolute;
+
     width: 40px;
     height: 38px;
+
     top: 1px;
-    right: 16px;
-    padding: 0 15px;
+    right: 1px;
+
+    padding: 0;
+
     border: none;
-    background: none;
+    background: transparent;
+
     color: #353535;
+
+    text-align: center;
+
+    transition: 0.3s ease;
 }
 
 .top-header .search button:hover {
-    background: #E47A2E;
     color: #ffffff;
+    background: #E47A2E;
 }
 
 .top-header .social {
     position: relative;
+
     width: 100%;
-    height: 40px;
+    min-height: 40px;
+
     overflow: hidden;
+
     text-align: right;
 }
 
 .top-header .social a {
-    display: inline-block;
+    display: inline-flex;
+
     width: 40px;
     height: 40px;
-    padding: 1px 0;
-    text-align: center;
-    font-size: 22px;
-    border: 1px solid #353535;
-}
 
-.top-header .social a:hover {
-    background: #E47A2E;
-    border: 1px solid #E47A2E;
+    margin-left: 3px;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+
+    border: 1px solid #353535;
+    background: #ffffff;
+
+    transition: 0.3s ease;
 }
 
 .top-header .social a i {
     color: #353535;
 }
 
+.top-header .social a:hover {
+    background: #E47A2E;
+    border-color: #E47A2E;
+}
+
 .top-header .social a:hover i {
     color: #ffffff;
 }
 
-@media (min-width: 768px) {
-    .top-header {
-        max-height: 90px;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .top-header .logo,
-    .top-header .search,
-    .top-header .social {
-        text-align: center;
-        margin-bottom: 15px;
-    }
-    
-    .top-header .social {
-        margin-bottom: 0;
-    }
-}
-
 
 /**********************************/
-/********* Header Nav CSS *********/
+/******** HEADER NAVIGATION *******/
 /**********************************/
+
 .header {
     position: relative;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+    width: 100%;
+    background: #353535;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .header.header-sticky {
     position: fixed;
     top: 0;
+    left: 0;
+
     width: 100%;
-    z-index: 999;
+
+    z-index: 9999;
 }
 
 .header .navbar {
-    height: 100%;
+    width: 100%;
+    min-height: 50px;
     padding: 0;
+    background: #353535;
 }
 
 .navbar-dark .navbar-nav .nav-link,
-.navbar-dark .navbar-nav .nav-link:focus,
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
-    padding: 10px 10px 8px 10px;
+.navbar-dark .navbar-nav .nav-link:focus {
+    padding: 10px 15px 8px 15px;
+
     color: #ffffff;
+
+    font-size: 15px;
+    text-transform: uppercase;
+
+    border-bottom: 2px solid transparent;
+
+    transition: 0.3s ease;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover,
 .navbar-dark .navbar-nav .nav-link.active {
-    background: rgba(228, 122, 46, .2);
-    border-bottom: 2px solid #E47A2E;
-    transition: none;
+    color: #ffffff;
+
+    background: rgba(228, 122, 46, 0.2);
+
+    border-bottom-color: #E47A2E;
+}
+
+.header .navbar-brand {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.header .navbar-brand:hover {
+    color: #E47A2E;
 }
 
 .header .dropdown-menu {
     margin-top: 0;
+
+    padding: 0;
+
     border: 0;
     border-radius: 0;
+
     background: #f8f9fa;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-@media (min-width: 768px) {
-    .header,
-    .header .navbar {
-        background: #353535 !important;
-    }
-    
-    .header .navbar-brand {
-        display: none;
-    }
-    
-    .header a.nav-link {
-        padding: 8px 15px;
-        font-size: 15px;
-        text-transform: uppercase;
-    }
+.header .dropdown-item {
+    padding: 10px 15px;
+    color: #353535;
 }
 
-@media (max-width: 768px) {   
-    .header,
-    .header .navbar {
-        background: #333333 !important;
-    }
-    
-    .header a.nav-link {
-        padding: 5px;
-    }
-    
-    .header .dropdown-menu {
-        box-shadow: none;
-    }
+.header .dropdown-item:hover {
+    color: #ffffff;
+    background: #E47A2E;
 }
 
 
 /**********************************/
-/********** Top News CSS **********/
+/************ TOP NEWS ************/
 /**********************************/
+
 .top-news {
     position: relative;
     width: 100%;
@@ -307,38 +442,58 @@ button.btn:hover {
 
 .top-news .tn-img {
     position: relative;
+    width: 100%;
     overflow: hidden;
+    background: #eeeeee;
 }
 
 .top-news .tn-img img {
     width: 100%;
+    height: auto;
+    transition: 0.4s ease;
 }
 
 .top-news .tn-img:hover img {
-    filter: blur(5px);
-    -webkit-filter: blur(5px);
+    transform: scale(1.03);
 }
 
 .top-news .tn-content {
     position: absolute;
-    top: 0; 
+
+    top: 0;
     right: 0;
-    bottom: 0; 
+    bottom: 0;
     left: 0;
-    padding: 15px 10px 15px 20px;
-    background-image: linear-gradient(rgba(0, 0, 0, .0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .9));
+
+    padding: 20px;
+
     display: flex;
     align-items: flex-end;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0.9)
+        );
 }
 
-.top-news .tn-content a.tn-date{
-    display: block;
+.top-news .tn-content > div {
     width: 100%;
-    margin-bottom: 5px;
+}
+
+.top-news .tn-content a.tn-date {
+    display: block;
+
+    width: 100%;
+
+    margin-bottom: 7px;
+
     color: #ffffff;
-    font-size: 14px;
+
+    font-size: 13px;
     font-weight: 400;
-    transition: .3s;
+
     letter-spacing: 1px;
 }
 
@@ -347,16 +502,20 @@ button.btn:hover {
 }
 
 .top-news .tn-content a.tn-date:hover {
-    text-decoration: underline;
+    color: #E47A2E;
 }
 
 .top-news .tn-content a.tn-title {
     display: block;
+
     width: 100%;
+
     color: #ffffff;
-    font-size: 18px;
-    font-weight: 400;
-    transition: .3s;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    line-height: 1.35;
 }
 
 .top-news .tn-left .tn-content a.tn-title {
@@ -370,8 +529,9 @@ button.btn:hover {
 
 
 /**********************************/
-/******* Category News CSS ********/
+/********** CATEGORY NEWS *********/
 /**********************************/
+
 .cat-news {
     position: relative;
     width: 100%;
@@ -383,53 +543,78 @@ button.btn:hover {
 }
 
 .cat-news h2 {
+    position: relative;
+
     color: #353535;
+
     font-size: 35px;
     font-weight: 700;
-    margin-left: 40px;
+
+    margin: 0 0 25px 40px;
 }
 
 .cat-news h2 i {
     position: absolute;
-    top: 8px;
-    left: 15px;
+
+    top: 5px;
+    left: -40px;
+
     font-size: 28px;
 }
 
 .cat-news .cn-img {
     position: relative;
+    width: 100%;
     overflow: hidden;
+    background: #eeeeee;
 }
 
 .cat-news .cn-img img {
     width: 100%;
+    height: auto;
+    transition: 0.4s ease;
 }
 
 .cat-news .cn-img:hover img {
-    filter: blur(5px);
-    -webkit-filter: blur(5px);
+    transform: scale(1.03);
 }
 
 .cat-news .cn-content {
     position: absolute;
-    top: 0; 
+
+    top: 0;
     right: 0;
-    bottom: 0; 
+    bottom: 0;
     left: 0;
-    padding: 15px 10px 15px 20px;
-    background-image: linear-gradient(rgba(0, 0, 0, .0), rgba(0, 0, 0, .3), rgba(0, 0, 0, .9));
+
+    padding: 20px;
+
     display: flex;
     align-items: flex-end;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0.9)
+        );
+}
+
+.cat-news .cn-content > div {
+    width: 100%;
 }
 
 .cat-news .cn-content a.cn-date {
     display: block;
+
     width: 100%;
-    margin-bottom: 5px;
+
+    margin-bottom: 7px;
+
     color: #ffffff;
-    font-size: 14px;
-    font-weight: 400;
-    transition: .3s;
+
+    font-size: 13px;
+
     letter-spacing: 1px;
 }
 
@@ -438,31 +623,46 @@ button.btn:hover {
 }
 
 .cat-news .cn-content a.cn-date:hover {
-    text-decoration: underline;
+    color: #E47A2E;
 }
 
 .cat-news .cn-content a.cn-title {
     display: block;
+
     width: 100%;
+
     color: #ffffff;
+
     font-size: 18px;
-    font-weight: 400;
-    transition: .3s;
+    font-weight: 600;
+
+    line-height: 1.4;
 }
 
 .cat-news .cn-content a.cn-title:hover {
     color: #E47A2E;
 }
 
+
+/**********************************/
+/******** CATEGORY SLIDER *********/
+/**********************************/
+
 .cat-news .slick-prev,
 .cat-news .slick-next {
     top: -35px;
+
     width: 28px;
     height: 28px;
+
     z-index: 1;
-    transition: .5s;
+
     color: #ffffff;
     background: #353535;
+
+    border: none;
+
+    transition: 0.3s ease;
 }
 
 .cat-news .slick-prev {
@@ -484,8 +684,10 @@ button.btn:hover {
 .cat-news .slick-prev::before,
 .cat-news .slick-next::before {
     font-family: "Font Awesome 5 Free";
+
     font-size: 18px;
     font-weight: 900;
+
     color: #ffffff;
 }
 
@@ -499,8 +701,9 @@ button.btn:hover {
 
 
 /**********************************/
-/********** Main News CSS *********/
+/************ MAIN NEWS ***********/
 /**********************************/
+
 .main-news {
     position: relative;
     width: 100%;
@@ -513,41 +716,62 @@ button.btn:hover {
 }
 
 .main-news h2 {
+    position: relative;
+
     color: #353535;
+
     font-size: 35px;
     font-weight: 700;
-    margin-left: 40px;
+
+    margin: 0 0 25px 40px;
 }
 
 .main-news h2 i {
     position: absolute;
-    top: 8px;
-    left: 15px;
+
+    top: 5px;
+    left: -40px;
+
     font-size: 28px;
 }
 
 .main-news .mn-img {
     position: relative;
+    width: 100%;
     overflow: hidden;
+    background: #eeeeee;
 }
 
 .main-news .mn-img img {
     width: 100%;
+    height: auto;
+
+    transition: 0.4s ease;
+}
+
+.main-news .mn-img:hover img {
+    transform: scale(1.03);
 }
 
 .main-news .mn-content {
     position: relative;
     width: 100%;
+
     padding: 15px 0 0 0;
 }
 
 .main-news .mn-content a.mn-title {
     display: block;
+
     width: 100%;
+
     color: #353535;
+
     font-size: 28px;
     font-weight: 700;
-    line-height: 32px;
+
+    line-height: 1.25;
+
     margin-bottom: 10px;
 }
 
@@ -557,12 +781,15 @@ button.btn:hover {
 
 .main-news .mn-content a.mn-date {
     display: block;
+
     width: 100%;
-    margin-bottom: 5px;
+
+    margin-bottom: 8px;
+
     color: #757575;
-    font-size: 14px;
-    font-weight: 400;
-    transition: .3s;
+
+    font-size: 13px;
+
     letter-spacing: 1px;
 }
 
@@ -571,46 +798,68 @@ button.btn:hover {
 }
 
 .main-news .mn-content a.mn-date:hover {
-    text-decoration: underline;
+    color: #E47A2E;
 }
 
 .main-news .mn-content p {
     margin: 0;
 }
 
+
+/**********************************/
+/******** MAIN NEWS LIST **********/
+/**********************************/
+
 .main-news .mn-list {
     position: relative;
+
     width: 100%;
-    float: left;
+
+    display: flex;
+
     margin-bottom: 30px;
 }
 
 .main-news .mn-list .mn-img {
     position: relative;
+
+    flex: 0 0 100px;
+
     width: 100px;
+    height: 80px;
+
     margin-right: 15px;
-    float: left;
+
     overflow: hidden;
 }
 
 .main-news .mn-list .mn-img img {
     width: 100%;
+    height: 100%;
+
+    object-fit: cover;
 }
 
 .main-news .mn-list .mn-content {
-    position: relative;
-    float: left;
-    width: calc(100% - 115px);
+    flex: 1;
+
+    width: auto;
+
     padding: 0;
 }
 
 .main-news .mn-list .mn-content a.mn-title {
     display: block;
+
     width: 100%;
+
     color: #353535;
+
     font-size: 18px;
-    font-weight: 400;
-    line-height: 20px;
+    font-weight: 600;
+
+    line-height: 1.3;
+
     margin-bottom: 5px;
 }
 
@@ -620,27 +869,23 @@ button.btn:hover {
 
 .main-news .mn-list .mn-content a.mn-date {
     display: block;
+
     width: 100%;
+
     margin-bottom: 0;
+
     color: #757575;
-    font-size: 14px;
-    font-weight: 400;
-    transition: .3s;
-    letter-spacing: 1px;
-}
 
-.main-news .mn-list .mn-content a.mn-date i {
-    margin-right: 5px;
-}
+    font-size: 12px;
 
-.main-news .mn-list .mn-content a.mn-date:hover {
-    text-decoration: underline;
+    letter-spacing: 0.5px;
 }
 
 
 /**********************************/
-/*********** Sidebar CSS **********/
+/************ SIDEBAR *************/
 /**********************************/
+
 .sidebar {
     position: relative;
     width: 100%;
@@ -648,22 +893,30 @@ button.btn:hover {
 
 .sidebar .sidebar-widget {
     position: relative;
+
     width: 100%;
+
     margin-bottom: 45px;
 }
 
 .sidebar .sidebar-widget h2 {
+    position: relative;
+
     color: #353535;
-    font-size: 35px;
+
+    font-size: 30px;
     font-weight: 700;
-    margin-left: 40px;
+
+    margin: 0 0 20px 40px;
 }
 
 .sidebar .sidebar-widget h2 i {
     position: absolute;
-    top: 8px;
-    left: 0;
-    font-size: 28px;
+
+    top: 4px;
+    left: -40px;
+
+    font-size: 25px;
 }
 
 .sidebar .sidebar-widget .category {
@@ -672,6 +925,7 @@ button.btn:hover {
 
 .sidebar .sidebar-widget .category .fa-ul {
     margin-left: 23px;
+    padding: 0;
 }
 
 .sidebar .sidebar-widget .category .fa-ul li {
@@ -696,17 +950,29 @@ button.btn:hover {
 
 .sidebar .sidebar-widget .tags a {
     display: inline-block;
-    margin-bottom: 5px;
-    padding: 5px 10px;
+
+    margin: 0 3px 7px 0;
+
+    padding: 6px 10px;
+
     color: #353535;
     background: #ffffff;
+
     border: 1px solid #353535;
+
+    transition: 0.3s ease;
 }
 
 .sidebar .sidebar-widget .tags a:hover {
     color: #ffffff;
     background: #E47A2E;
-    border: 1px solid #E47A2E;
+    border-color: #E47A2E;
+}
+
+.sidebar .sidebar-widget .image {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
 }
 
 .sidebar .sidebar-widget .image a {
@@ -716,30 +982,36 @@ button.btn:hover {
 }
 
 .sidebar .sidebar-widget .image img {
+    width: 100%;
     max-width: 100%;
-    transition: .3s;
+    transition: 0.4s ease;
 }
 
 .sidebar .sidebar-widget .image img:hover {
-    transform: scale(1.1);
-    filter: blur(3px);
-    -webkit-filter: blur(3px);
+    transform: scale(1.05);
 }
 
 
 /**********************************/
-/********* Breadcrumb CSS *********/
+/*********** BREADCRUMB ***********/
 /**********************************/
+
 .breadcrumb-wrap {
     position: relative;
+
     width: 100%;
+
     background: #ffffff;
 }
 
 .breadcrumb-wrap .breadcrumb {
     margin: 25px 0 0 0;
+
     padding: 0;
-    background: none;
+
+    background: transparent;
+
+    border-radius: 0;
 }
 
 .breadcrumb-wrap .breadcrumb .breadcrumb-item + .breadcrumb-item::before {
@@ -752,37 +1024,53 @@ button.btn:hover {
 
 
 /**********************************/
-/********* Single News CSS ********/
+/************ SINGLE NEWS *********/
 /**********************************/
+
 .single-news {
     position: relative;
+
     width: 100%;
-    padding: 25px 0 0 0;
+
+    padding: 25px 0 40px 0;
 }
 
 .single-news .sn-img {
     position: relative;
+
+    width: 100%;
+
     overflow: hidden;
+
+    background: #eeeeee;
 }
 
 .single-news .sn-img img {
     width: 100%;
+    height: auto;
 }
 
 .single-news .sn-content {
     position: relative;
+
     width: 100%;
-    padding: 30px 0 30px 0;
+
+    padding: 30px 0;
 }
 
 .single-news .sn-content a.sn-title {
     display: block;
+
     width: 100%;
+
     color: #353535;
+
     font-size: 35px;
     font-weight: 700;
-    line-height: 32px;
-    margin-bottom: 10px;
+
+    line-height: 1.2;
+
+    margin-bottom: 12px;
 }
 
 .single-news .sn-content a.sn-title:hover {
@@ -791,12 +1079,15 @@ button.btn:hover {
 
 .single-news .sn-content a.sn-date {
     display: block;
+
     width: 100%;
-    margin-bottom: 15px;
+
+    margin-bottom: 20px;
+
     color: #757575;
-    font-size: 14px;
-    font-weight: 400;
-    transition: .3s;
+
+    font-size: 13px;
+
     letter-spacing: 1px;
 }
 
@@ -805,30 +1096,46 @@ button.btn:hover {
 }
 
 .single-news .sn-content a.sn-date:hover {
-    text-decoration: underline;
+    color: #E47A2E;
+}
+
+.single-news .sn-content p {
+    line-height: 1.8;
 }
 
 
 /**********************************/
-/********** Contact CSS ***********/
+/************* CONTACT ************/
 /**********************************/
+
 .contact {
     position: relative;
+
+    width: 100%;
+
     padding: 25px 0 45px 0;
 }
 
 .contact .map {
     position: relative;
+
     width: 100%;
+
+    overflow: hidden;
 }
 
 .contact .map iframe {
+    display: block;
+
     width: 100%;
     height: 300px;
+
+    border: 0;
 }
 
 .contact .contact-info h4 {
     margin-bottom: 10px;
+
     font-size: 16px;
     font-weight: 400;
 }
@@ -840,18 +1147,26 @@ button.btn:hover {
 
 .contact .social {
     position: relative;
+
     width: 100%;
 }
 
 .contact .social a {
-    display: inline-block;
-    margin: 10px 10px 0 0;
+    display: inline-flex;
+
     width: 40px;
     height: 40px;
-    padding: 3px 0;
-    text-align: center;
+
+    margin: 10px 10px 0 0;
+
+    align-items: center;
+    justify-content: center;
+
     font-size: 20px;
+
     border: 1px solid #353535;
+
+    transition: 0.3s ease;
 }
 
 .contact .social a i {
@@ -871,20 +1186,61 @@ button.btn:hover {
     color: #666666;
 }
 
-@media (max-width: 767.98px) {
-    .contact .form {
-        margin-bottom: 30px;
-    }
+
+/**********************************/
+/******** CATEGORY PAGE BOX *******/
+/**********************************/
+
+.categories-page {
+    width: 100%;
+
+    padding: 30px;
+
+    margin-top: 30px;
+
+    background-color: #A3B3FF;
+
+    border-radius: 10px;
+}
+
+.add-cate {
+    width: 100%;
+
+    padding: 30px;
+
+    margin-top: 30px;
+
+    background-color: #A3B3FF;
+
+    border-radius: 10px;
+}
+
+.existing-cate {
+    width: 100%;
+
+    padding: 30px;
+
+    margin-top: 30px;
+
+    background-color: #A3B3FF;
+
+    border-radius: 10px;
 }
 
 
 /**********************************/
-/********** Footer CSS ************/
+/************** FOOTER ************/
 /**********************************/
+
 .footer {
     position: relative;
+
+    width: 100%;
+
     padding: 60px 0 0 0;
-    margin-top: 15px;
+
+    margin-top: 30px;
+
     background: #353535;
 }
 
@@ -896,17 +1252,23 @@ button.btn:hover {
 
 .footer .footer-widget {
     position: relative;
+
     width: 100%;
-    margin-bottom: 60px;
+
+    margin-bottom: 45px;
 }
 
 .footer .footer-widget h1 {
     color: #ffffff;
-    margin-bottom: 18px; 
+
+    margin-bottom: 18px;
+
+    font-size: 28px;
 }
 
 .footer .footer-widget .title {
     color: #ffffff;
+
     white-space: nowrap;
 }
 
@@ -917,61 +1279,83 @@ button.btn:hover {
 .footer .footer-widget ul {
     margin: 0;
     padding: 0;
+
     list-style: none;
 }
 
 .footer .footer-widget ul li {
-    margin-bottom: 12px; 
+    margin-bottom: 12px;
 }
 
 .footer .footer-widget ul li:last-child {
-    margin-bottom: 0; 
+    margin-bottom: 0;
 }
 
 .footer .footer-widget ul li a {
-    color: #ffffff;
-    white-space: nowrap;
     display: block;
+
+    color: #ffffff;
+
     line-height: 23px;
+
+    white-space: nowrap;
+
+    transition: 0.3s ease;
 }
 
 .footer .footer-widget ul li a::before {
-    content: '\f061';
-    font-family: 'Font Awesome 5 Free';
+    content: "\f061";
+
+    font-family: "Font Awesome 5 Free";
     font-weight: 900;
+
     padding-right: 5px;
 }
 
 .footer .footer-widget ul li a:hover {
-    padding-left: 10px; 
+    padding-left: 8px;
+
+    color: #E47A2E;
 }
 
 .footer .contact-info p {
     margin-bottom: 5px;
+
     color: #ffffff;
+
     font-size: 16px;
 }
 
 .footer .contact-info p i {
     color: #ffffff;
+
     margin-right: 5px;
 }
 
 .footer .social {
     position: relative;
+
     width: 100%;
 }
 
 .footer .social a {
-    display: inline-block;
-    margin: 10px 5px 0 0;
+    display: inline-flex;
+
     width: 35px;
     height: 35px;
-    padding: 2px 0;
-    text-align: center;
+
+    margin: 10px 5px 0 0;
+
+    align-items: center;
+    justify-content: center;
+
     font-size: 18px;
+
     background: #353535;
+
     border: 1px solid #ffffff;
+
+    transition: 0.3s ease;
 }
 
 .footer .social a i {
@@ -980,55 +1364,73 @@ button.btn:hover {
 
 .footer .social a:hover {
     background: #E47A2E;
-    border: 1px solid #E47A2E;
+    border-color: #E47A2E;
 }
 
 .footer .newsletter {
     position: relative;
+
     width: 100%;
 }
 
 .footer .newsletter form {
     position: relative;
+
     width: 100%;
 }
 
 .footer .newsletter input {
     width: 100%;
     height: 40px;
-    padding: 0 15px;
+
+    padding: 0 90px 0 15px;
+
     border: 1px solid #ffffff;
+
+    background: #ffffff;
 }
 
 .footer .newsletter .btn {
     position: absolute;
+
     width: 80px;
     height: 40px;
+
     top: 0;
     right: 0;
+
     padding: 0 15px;
-    border: none;
-    background: #353535;
-    color: #ffffff;
+
     border: 1px solid #ffffff;
+
+    background: #353535;
+
+    color: #ffffff;
 }
 
 .footer .newsletter .btn:hover {
     background: #E47A2E;
+    border-color: #E47A2E;
 }
 
 .footer .newsletter input:focus,
 .footer .newsletter .btn:focus {
+    outline: none;
     box-shadow: none;
 }
 
 
 /**********************************/
-/******** Footer Bottom CSS *******/
+/********** FOOTER BOTTOM *********/
 /**********************************/
+
 .footer-bottom {
     position: relative;
+
+    width: 100%;
+
     padding: 25px 0;
+
     background: #111111;
 }
 
@@ -1043,7 +1445,9 @@ button.btn:hover {
 .footer-bottom .copyright p,
 .footer-bottom .template-by p {
     color: #ffffff;
+
     font-weight: 400;
+
     margin: 0;
 }
 
@@ -1057,177 +1461,33 @@ button.btn:hover {
     color: #ffffff;
 }
 
-@media (max-width: 768.98px) {
-    .footer-bottom .copyright,
-    .footer-bottom .template-by {
-        text-align: center; 
-    } 
-}
 
-.categories-page {
-    background-color: #A3B3FF;
-    padding: 30px;
-    margin-top: 30px;
-    border-radius: 10px;
-}
+/**********************************/
+/******** TABLE RESPONSIVENESS ****/
+/**********************************/
 
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-}
-
-body {
-    background-color: lightblue;
-}
-
-.page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.main-content {
-    flex: 1;
-}
-
-.site-footer {
-    text-align: center;
-    padding: 20px;
-}
-
-.add-cate {
-    background-color: #A3B3FF;
-    padding: 30px;
-    margin-top: 30px;
-    border-radius: 10px;
-}
-
-.existing-cate {
-    background-color: #A3B3FF;
-    padding: 30px;
-    margin-top: 30px;
-    border-radius: 10px;
-}    
-
-
-
-
-/* ============================================================
-   RESPONSIVE LAYOUT / MOBILE OVERFLOW FIX
-   ============================================================ */
-
-/* ------------------------------------------------------------
-   GLOBAL BOX SIZING
-   ------------------------------------------------------------ */
-
-html {
+table {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
-    box-sizing: border-box;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: inherit;
-}
-
-body {
+.table-responsive {
     width: 100%;
     max-width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 
-/* ------------------------------------------------------------
-   RESPONSIVE IMAGES
-   ------------------------------------------------------------ */
-
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-}
-
-
-/* ------------------------------------------------------------
-   PREVENT LONG TEXT FROM BREAKING THE PAGE
-   ------------------------------------------------------------ */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-a,
-span,
-div {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-}
-
-
-/* ------------------------------------------------------------
-   BOOTSTRAP CONTAINERS
-   ------------------------------------------------------------ */
-
-.container,
-.container-fluid {
-    width: 100%;
-}
-
-
-/* ------------------------------------------------------------
-   BOOTSTRAP ROWS
-   ------------------------------------------------------------ */
-
-.row {
-    width: 100%;
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-}
-
-
-/* ------------------------------------------------------------
-   MEDIA / VIDEO / IFRAMES
-   ------------------------------------------------------------ */
-
-iframe,
-video,
-embed,
-object {
-    max-width: 100%;
-}
-
-
-/* ------------------------------------------------------------
-   FORMS
-   ------------------------------------------------------------ */
-
-input,
-textarea,
-select,
-button {
-    max-width: 100%;
-}
-
-
-/* ============================================================
-   MOBILE DEVICES
-   ============================================================ */
+/**********************************/
+/*********** MOBILE CSS ***********/
+/**********************************/
 
 @media (max-width: 767.98px) {
 
-    /* --------------------------------------------------------
-       PAGE WIDTH
-       -------------------------------------------------------- */
+    /******************************/
+    /******** GENERAL *************/
+    /******************************/
 
     html,
     body {
@@ -1235,11 +1495,6 @@ button {
         max-width: 100%;
         overflow-x: hidden;
     }
-
-
-    /* --------------------------------------------------------
-       BOOTSTRAP CONTAINERS
-       -------------------------------------------------------- */
 
     .container,
     .container-fluid {
@@ -1249,11 +1504,6 @@ button {
         padding-right: 15px;
     }
 
-
-    /* --------------------------------------------------------
-       ROWS
-       -------------------------------------------------------- */
-
     .row {
         width: 100%;
         max-width: 100%;
@@ -1261,23 +1511,18 @@ button {
         margin-right: 0;
     }
 
-
-    /* --------------------------------------------------------
-       COLUMNS
-       -------------------------------------------------------- */
-
     [class*="col-"] {
         max-width: 100%;
     }
 
 
-    /* --------------------------------------------------------
-       TOP HEADER
-       -------------------------------------------------------- */
+    /******************************/
+    /******** TOP HEADER **********/
+    /******************************/
 
     .top-header {
         width: 100%;
-        max-width: 100%;
+        padding: 15px 0;
         overflow: hidden;
     }
 
@@ -1286,40 +1531,29 @@ button {
     .top-header .social {
         width: 100%;
         max-width: 100%;
+
+        text-align: center;
+
+        margin-bottom: 15px;
     }
-
-
-    /* --------------------------------------------------------
-       LOGO
-       -------------------------------------------------------- */
 
     .top-header .logo img {
-        max-width: 100%;
-        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .top-header .social {
+        margin-bottom: 0;
+    }
+
+    .top-header .social a {
+        margin: 0 2px;
     }
 
 
-    /* --------------------------------------------------------
-       SEARCH
-       -------------------------------------------------------- */
-
-    .top-header .search {
-        position: relative;
-    }
-
-    .top-header .search input[type="text"] {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .top-header .search button {
-        max-width: 40px;
-    }
-
-
-    /* --------------------------------------------------------
-       NAVIGATION
-       -------------------------------------------------------- */
+    /******************************/
+    /******** NAVIGATION **********/
+    /******************************/
 
     .header,
     .header .navbar {
@@ -1328,12 +1562,13 @@ button {
     }
 
     .header .navbar {
+        min-height: 50px;
         overflow-x: hidden;
     }
 
-    .navbar-collapse {
-        width: 100%;
-        max-width: 100%;
+    .header a.nav-link {
+        padding: 8px 5px;
+        white-space: normal;
     }
 
     .navbar-nav {
@@ -1341,19 +1576,26 @@ button {
         max-width: 100%;
     }
 
-    .header a.nav-link {
-        white-space: normal;
+    .navbar-collapse {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .header .dropdown-menu {
+        width: 100%;
+        box-shadow: none;
     }
 
 
-    /* --------------------------------------------------------
-       TOP NEWS
-       -------------------------------------------------------- */
+    /******************************/
+    /********** TOP NEWS **********/
+    /******************************/
 
     .top-news {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+        padding-top: 20px;
     }
 
     .top-news .tn-img {
@@ -1370,11 +1612,11 @@ button {
     .top-news .tn-content {
         width: 100%;
         max-width: 100%;
+        padding: 15px;
     }
 
     .top-news .tn-content a.tn-title {
-        max-width: 100%;
-        font-size: 20px;
+        font-size: 19px;
         line-height: 1.3;
     }
 
@@ -1384,14 +1626,23 @@ button {
     }
 
 
-    /* --------------------------------------------------------
-       CATEGORY NEWS
-       -------------------------------------------------------- */
+    /******************************/
+    /******** CATEGORY NEWS *******/
+    /******************************/
 
     .cat-news {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+    }
+
+    .cat-news h2 {
+        font-size: 28px;
+        margin-left: 40px;
+    }
+
+    .cat-news h2 i {
+        font-size: 24px;
     }
 
     .cat-news .cn-img {
@@ -1408,22 +1659,27 @@ button {
     .cat-news .cn-content {
         width: 100%;
         max-width: 100%;
-    }
-
-    .cat-news h2 {
-        font-size: 28px;
-        margin-left: 40px;
+        padding: 15px;
     }
 
 
-    /* --------------------------------------------------------
-       MAIN NEWS
-       -------------------------------------------------------- */
+    /******************************/
+    /********** MAIN NEWS *********/
+    /******************************/
 
     .main-news {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+    }
+
+    .main-news h2 {
+        font-size: 28px;
+        margin-left: 40px;
+    }
+
+    .main-news h2 i {
+        font-size: 24px;
     }
 
     .main-news .mn-img {
@@ -1447,39 +1703,54 @@ button {
         line-height: 1.3;
     }
 
-    .main-news h2 {
-        font-size: 28px;
-    }
 
-
-    /* --------------------------------------------------------
-       MAIN NEWS LIST
-       -------------------------------------------------------- */
+    /******************************/
+    /******** MAIN NEWS LIST ******/
+    /******************************/
 
     .main-news .mn-list {
         width: 100%;
         max-width: 100%;
-        float: none;
+
+        display: flex;
+
+        margin-bottom: 25px;
+
         overflow: hidden;
     }
 
     .main-news .mn-list .mn-img {
-        max-width: 100px;
+        flex: 0 0 90px;
+
+        width: 90px;
+        height: 70px;
+
+        margin-right: 12px;
     }
 
     .main-news .mn-list .mn-content {
-        max-width: calc(100% - 115px);
+        width: auto;
+        max-width: none;
+
+        padding: 0;
+    }
+
+    .main-news .mn-list .mn-content a.mn-title {
+        font-size: 17px;
+        line-height: 1.3;
     }
 
 
-    /* --------------------------------------------------------
-       SINGLE NEWS
-       -------------------------------------------------------- */
+    /******************************/
+    /********** SINGLE NEWS *******/
+    /******************************/
 
     .single-news {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+
+        padding-top: 15px;
     }
 
     .single-news .sn-img,
@@ -1494,26 +1765,40 @@ button {
         height: auto;
     }
 
+    .single-news .sn-content {
+        padding: 20px 0;
+    }
+
     .single-news .sn-content a.sn-title {
         font-size: 28px;
         line-height: 1.3;
     }
 
 
-    /* --------------------------------------------------------
-       SIDEBAR
-       -------------------------------------------------------- */
+    /******************************/
+    /*********** SIDEBAR **********/
+    /******************************/
 
     .sidebar {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+
+        margin-top: 20px;
+    }
+
+    .sidebar .sidebar-widget {
+        margin-bottom: 35px;
+    }
+
+    .sidebar .sidebar-widget h2 {
+        font-size: 28px;
     }
 
 
-    /* --------------------------------------------------------
-       CONTACT
-       -------------------------------------------------------- */
+    /******************************/
+    /************ CONTACT *********/
+    /******************************/
 
     .contact {
         width: 100%;
@@ -1527,10 +1812,18 @@ button {
         max-width: 100%;
     }
 
+    .contact .map iframe {
+        height: 250px;
+    }
 
-    /* --------------------------------------------------------
-       FORMS
-       -------------------------------------------------------- */
+    .contact .form {
+        margin-bottom: 30px;
+    }
+
+
+    /******************************/
+    /************ FORMS ***********/
+    /******************************/
 
     form {
         width: 100%;
@@ -1552,9 +1845,9 @@ button {
     }
 
 
-    /* --------------------------------------------------------
-       BUTTONS
-       -------------------------------------------------------- */
+    /******************************/
+    /*********** BUTTONS **********/
+    /******************************/
 
     .btn {
         max-width: 100%;
@@ -1562,19 +1855,23 @@ button {
     }
 
 
-    /* --------------------------------------------------------
-       FOOTER
-       -------------------------------------------------------- */
+    /******************************/
+    /************ FOOTER **********/
+    /******************************/
 
     .footer {
         width: 100%;
         max-width: 100%;
         overflow: hidden;
+
+        padding-top: 40px;
     }
 
     .footer .footer-widget {
         width: 100%;
         max-width: 100%;
+
+        margin-bottom: 35px;
     }
 
     .footer .footer-widget .title {
@@ -1585,20 +1882,16 @@ button {
         white-space: normal;
     }
 
-    .footer .newsletter {
-        width: 100%;
-        max-width: 100%;
-    }
-
+    .footer .newsletter,
     .footer .newsletter form {
         width: 100%;
         max-width: 100%;
     }
 
 
-    /* --------------------------------------------------------
-       FOOTER BOTTOM
-       -------------------------------------------------------- */
+    /******************************/
+    /******** FOOTER BOTTOM *******/
+    /******************************/
 
     .footer-bottom {
         width: 100%;
@@ -1606,28 +1899,35 @@ button {
         overflow: hidden;
     }
 
+    .footer-bottom .copyright,
+    .footer-bottom .template-by {
+        text-align: center;
+    }
 
-    /* --------------------------------------------------------
-       CATEGORY / CUSTOM CONTENT BOXES
-       -------------------------------------------------------- */
+    .footer-bottom .copyright {
+        margin-bottom: 10px;
+    }
+
+
+    /******************************/
+    /******* CUSTOM BOXES *********/
+    /******************************/
 
     .categories-page,
     .add-cate,
     .existing-cate {
         width: 100%;
         max-width: 100%;
+
+        padding: 20px;
+
         overflow: hidden;
     }
 
 
-    /* --------------------------------------------------------
-       PREVENT TABLES FROM BREAKING MOBILE LAYOUT
-       -------------------------------------------------------- */
-
-    table {
-        width: 100%;
-        max-width: 100%;
-    }
+    /******************************/
+    /*********** TABLES ***********/
+    /******************************/
 
     .table-responsive {
         width: 100%;
@@ -1637,9 +1937,9 @@ button {
 }
 
 
-/* ============================================================
-   VERY SMALL PHONES
-   ============================================================ */
+/**********************************/
+/******** VERY SMALL PHONES *******/
+/**********************************/
 
 @media (max-width: 375px) {
 
@@ -1649,8 +1949,12 @@ button {
         padding-right: 12px;
     }
 
-    .top-news .top-news .tn-left .tn-content a.tn-title {
+    .top-news .tn-left .tn-content a.tn-title {
         font-size: 22px;
+    }
+
+    .top-news .tn-content a.tn-title {
+        font-size: 18px;
     }
 
     .main-news .mn-content a.mn-title {
@@ -1664,6 +1968,76 @@ button {
     .cat-news h2,
     .main-news h2 {
         font-size: 25px;
+    }
+
+    .main-news .mn-list .mn-img {
+        flex: 0 0 80px;
+
+        width: 80px;
+        height: 65px;
+
+        margin-right: 10px;
+    }
+
+    .main-news .mn-list .mn-content a.mn-title {
+        font-size: 16px;
+    }
+}
+
+
+/**********************************/
+/********* DESKTOP TUNING *********/
+/**********************************/
+
+@media (min-width: 768px) {
+
+    .top-header {
+        max-height: 90px;
+    }
+
+    .header,
+    .header .navbar {
+        background: #353535 !important;
+    }
+
+    .header .navbar-brand {
+        display: none;
+    }
+
+    .header a.nav-link {
+        padding: 10px 15px 8px 15px;
+        font-size: 15px;
+        text-transform: uppercase;
+    }
+}
+
+
+/**********************************/
+/********* ACCESSIBILITY **********/
+/**********************************/
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid #E47A2E;
+    outline-offset: 2px;
+}
+
+
+/**********************************/
+/******** REDUCED MOTION **********/
+/**********************************/
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
     }
 }
 
